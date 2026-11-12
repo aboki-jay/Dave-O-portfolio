@@ -51,7 +51,7 @@ Or ask Claude which notes are there and it will guide you.
 
 - **"Let search engines list the site."** The site is currently hidden from Google and other search engines because it still has placeholder text. It is one switch.
 - **"Add a case study"** or **"add a testimonial"**: send the text and images.
-- **"Here is my resume PDF"**: turns on the Download PDF button.
+- **"Here is my new resume"**: the Download PDF button fetches the PDF from your Google Drive. If you replace the file in Drive with **Manage versions** (right-click the file, **File information**, **Manage versions**, **Upload new version**), the button keeps working with nothing to publish. If you upload it as a brand new file instead, send Claude the new share link.
 - **"Turn the sounds down"**, or off by default.
 
 ## Content the site is still waiting for
@@ -59,7 +59,7 @@ Or ask Claude which notes are there and it will guide you.
 - Real quotes, names and roles for the three **Kind words** notes
 - Results and metrics marked `[Add a result]` and `[Metric]`
 - Case study text and visuals for Dukacards, Afemairide, the Govtech project and the confidential project
-- Resume details: companies, dates, city, course of study, and the PDF
+- Resume details: companies, dates, city and course of study
 - Links for "Stigdata - Funding source", "Prototype", and each exploration
 - Real photos and captions for the About page, and pictures or videos for the Exploration tiles
 
