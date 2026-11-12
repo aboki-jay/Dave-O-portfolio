@@ -3,7 +3,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
 
   // Must match the Worker's name in the Cloudflare dashboard.
-  "name": "david-okunlola-portfolio",
+  "name": "dave-o-portfolio",
   "compatibility_date": "2026-10-01",
 
   // Before publishing (and when previewing), put the website together from "site-source".
