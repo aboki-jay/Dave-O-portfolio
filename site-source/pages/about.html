@@ -1,0 +1,83 @@
+<!--page {
+  "path": "/about/",
+  "active": "about",
+  "title": "About | David Okunlola",
+  "description": "David Okunlola is a Product & Brand Designer who designs products with an engineering lens, with 4+ years of experience across different industries."
+} -->
+{{> site-header}}
+  <main id="main" class="about">
+    <nav class="about-tabs" aria-label="On this page" data-section-tabs>
+      <a class="about-tab" href="#about-me" aria-current="true"><img src="/icons/icon-laugh.svg" width="20" height="20" alt=""><span>About me</span></a>
+      <a class="about-tab" href="#photography"><img src="/icons/icon-aperture.svg" width="20" height="20" alt=""><span>Photography</span><span class="about-tab__count">90</span></a>
+      <a class="about-tab" href="#books"><img src="/icons/icon-book-open.svg" width="20" height="20" alt=""><span>Books</span><span class="about-tab__count">04</span></a>
+      <a class="about-tab" href="#playlists"><img src="/icons/icon-music.svg" width="20" height="20" alt=""><span>Playlists</span></a>
+      <a class="about-tab" href="#note"><img src="/icons/icon-sticky-note.svg" width="20" height="20" alt=""><span>Note</span></a>
+    </nav>
+
+    <div class="about-main">
+      <section class="about-bio" id="about-me">
+        <h1 class="visually-hidden">About David Okunlola</h1>
+        <p class="body-18">I design products with an engineering lens, and I’m most interested in productivity tools with AI. I have 4+ years of experience across different industries, and I especially enjoy early exploration and systems thinking.</p>
+        <p class="body-18">Outside of designing, I take beautiful picture, explore fun stuffs, create playlist</p>
+        <p class="body-18">I’m open to contract work from December 2026. Reach out if you want to work together or just say hello.</p>
+        <a class="button button--primary" href="#contact"><span>Contact me</span></a>
+      </section>
+
+      <section id="photography" aria-label="Photography">
+        <div class="about-gallery">
+          <figure class="about-photo"><img src="/images/photo-casio-watch-420w.webp" srcset="/images/photo-casio-watch-420w.webp 420w, /images/photo-casio-watch-736w.webp 736w" sizes="(max-width: 1099px) 50vw, 418px" width="418" height="495" alt="A silver Casio watch resting on its box" decoding="async"><figcaption class="photo-tag"><span class="photo-tag__icon"><img src="/icons/photo-tag-watch.svg" width="16" height="16" alt=""></span><span class="photo-tag__label">Casio watch</span></figcaption></figure>
+          <figure class="about-photo"><img src="/images/photo-casio-watch-420w.webp" srcset="/images/photo-casio-watch-420w.webp 420w, /images/photo-casio-watch-736w.webp 736w" sizes="(max-width: 1099px) 50vw, 418px" width="418" height="495" alt="A silver Casio watch resting on its box" decoding="async"><figcaption class="photo-tag"><span class="photo-tag__icon"><img src="/icons/photo-tag-watch.svg" width="16" height="16" alt=""></span><span class="photo-tag__label">Casio watch</span></figcaption></figure>
+          <figure class="about-photo"><img src="/images/photo-casio-watch-420w.webp" srcset="/images/photo-casio-watch-420w.webp 420w, /images/photo-casio-watch-736w.webp 736w" sizes="(max-width: 1099px) 50vw, 418px" width="418" height="495" alt="A silver Casio watch resting on its box" loading="lazy" decoding="async"><figcaption class="photo-tag"><span class="photo-tag__icon"><img src="/icons/photo-tag-watch.svg" width="16" height="16" alt=""></span><span class="photo-tag__label">Casio watch</span></figcaption></figure>
+          <figure class="about-photo"><img src="/images/photo-casio-watch-420w.webp" srcset="/images/photo-casio-watch-420w.webp 420w, /images/photo-casio-watch-736w.webp 736w" sizes="(max-width: 1099px) 50vw, 418px" width="418" height="495" alt="A silver Casio watch resting on its box" loading="lazy" decoding="async"><figcaption class="photo-tag"><span class="photo-tag__icon"><img src="/icons/photo-tag-watch.svg" width="16" height="16" alt=""></span><span class="photo-tag__label">Casio watch</span></figcaption></figure>
+          <figure class="about-photo"><img src="/images/photo-casio-watch-420w.webp" srcset="/images/photo-casio-watch-420w.webp 420w, /images/photo-casio-watch-736w.webp 736w" sizes="(max-width: 1099px) 50vw, 418px" width="418" height="495" alt="A silver Casio watch resting on its box" loading="lazy" decoding="async"><figcaption class="photo-tag"><span class="photo-tag__icon"><img src="/icons/photo-tag-watch.svg" width="16" height="16" alt=""></span><span class="photo-tag__label">Casio watch</span></figcaption></figure>
+          <figure class="about-photo"><img src="/images/photo-casio-watch-420w.webp" srcset="/images/photo-casio-watch-420w.webp 420w, /images/photo-casio-watch-736w.webp 736w" sizes="(max-width: 1099px) 50vw, 418px" width="418" height="495" alt="A silver Casio watch resting on its box" loading="lazy" decoding="async"><figcaption class="photo-tag"><span class="photo-tag__icon"><img src="/icons/photo-tag-watch.svg" width="16" height="16" alt=""></span><span class="photo-tag__label">Casio watch</span></figcaption></figure>
+        </div>
+      </section>
+
+      <section id="books" aria-labelledby="books-heading">
+        <div class="about-section-header">
+          <h2 class="about-section-title" id="books-heading">Books</h2>
+          <dl class="about-stat"><dt>Total No. of Pages</dt><dd>1,200</dd></dl>
+          <dl class="about-stat"><dt>Total no. of books</dt><dd>8</dd></dl>
+        </div>
+        <ul class="book-list">
+          <li class="book"><div class="book__body"><p class="book__meta"><span>Author: Tom Greever</span><span>Page: 220</span></p><p class="book__title">Articulating Design Decision</p></div></li>
+          <li class="book"><div class="book__body"><p class="book__meta"><span>Author: Tom Greever</span><span>Page: 220</span></p><p class="book__title">Articulating Design Decision</p></div></li>
+        </ul>
+      </section>
+
+      <!-- Playlists and Note are in the side menu in Figma but have no design yet. -->
+      <section id="playlists" aria-labelledby="playlists-heading">
+        <div class="about-section-header"><h2 class="about-section-title" id="playlists-heading">Playlists</h2></div>
+        <div class="placeholder about-placeholder">Add playlists</div>
+      </section>
+
+      <section id="note" aria-labelledby="note-heading">
+        <div class="about-section-header"><h2 class="about-section-title" id="note-heading">Note</h2></div>
+        <div class="note-wall" data-note-wall>
+          <!-- The "Say something" button. Clicking it turns it into a small note to fill in. -->
+          <div class="note-composer note--purple" data-note-composer>
+            <button class="note-composer__open" type="button" data-note-open><img src="/icons/icon-pencil-line-white.svg" width="18" height="18" alt=""><span>Say something</span></button>
+            <form class="note-form" data-note-form hidden novalidate>
+              <label class="visually-hidden" for="note-message">Your note</label>
+              <textarea id="note-message" name="message" placeholder="Say something" maxlength="140" required></textarea>
+              <p class="note-form__error" role="alert" data-note-error hidden></p>
+              <!-- A trap for automated spam: people never see or fill this field. -->
+              <input class="note-form__trap" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+              <div class="note-form__footer">
+                <label class="visually-hidden" for="note-name">Your name</label>
+                <input id="note-name" name="name" type="text" placeholder="Your name" maxlength="40" autocomplete="name" required>
+                <button class="note-form__post" type="submit" disabled>Post</button>
+              </div>
+            </form>
+          </div>
+          <!-- Notes people have posted are added here by site.js, newest first. -->
+        </div>
+        <p class="visually-hidden" role="status" data-note-status></p>
+      </section>
+    </div>
+    <!-- Covers the rest of the page with a light veil while someone is writing a note. -->
+    <div class="note-dimmer" data-note-dimmer hidden></div>
+  </main>
+  {{> contact-box}}
+  {{> site-footer}}

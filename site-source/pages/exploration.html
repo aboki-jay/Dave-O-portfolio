@@ -1,0 +1,52 @@
+<!--page {
+  "path": "/exploration/",
+  "active": "exploration",
+  "title": "Exploration | David Okunlola",
+  "description": "Design explorations and concepts by David Okunlola, including a gamified mobile app that teaches Formula 1 to beginners."
+} -->
+{{> site-header}}
+  <main id="main" class="exploration">
+    <h1 class="heading-2">Exploration</h1>
+
+    <!-- One tile per exploration: a tall picture (or video), then its name and a line or two about it.
+         To add one, copy a <figure> block.
+         - Picture: replace the "Add exploration visual" box with an <img> or a <video>.
+         - Link: if the exploration can be opened somewhere (a prototype, a live page), put the name
+           inside <a class="exploration-tile__link" href="...">. The whole tile then becomes clickable.
+           The arrow beside the name appears on hover either way. -->
+    <div class="exploration-grid">
+      <figure class="exploration-tile" id="exploration-f1">
+        <div class="exploration-tile__media">Add exploration visual</div>
+        <figcaption class="exploration-tile__caption">
+          <h2 class="exploration-tile__name"><span class="exploration-tile__link">Mobile app for F1 beginners</span>{{> arrow-up-right}}</h2>
+          <p class="exploration-tile__about">A gamified concept that teaches Formula 1 through short lessons, quizzes and challenges. Points and unlockable features keep newcomers moving forward.</p>
+        </figcaption>
+      </figure>
+
+      <figure class="exploration-tile" id="exploration-2">
+        <div class="exploration-tile__media">Add exploration visual</div>
+        <figcaption class="exploration-tile__caption">
+          <h2 class="exploration-tile__name"><span class="exploration-tile__link">[Exploration title]</span>{{> arrow-up-right}}</h2>
+          <p class="exploration-tile__about">[One or two lines on what you were testing and what you learned]</p>
+        </figcaption>
+      </figure>
+
+      <figure class="exploration-tile">
+        <div class="exploration-tile__media">Add exploration visual</div>
+        <figcaption class="exploration-tile__caption">
+          <h2 class="exploration-tile__name"><span class="exploration-tile__link">[Exploration title]</span>{{> arrow-up-right}}</h2>
+          <p class="exploration-tile__about">[One or two lines on what you were testing and what you learned]</p>
+        </figcaption>
+      </figure>
+
+      <figure class="exploration-tile">
+        <div class="exploration-tile__media">Add exploration visual</div>
+        <figcaption class="exploration-tile__caption">
+          <h2 class="exploration-tile__name"><span class="exploration-tile__link">[Exploration title]</span>{{> arrow-up-right}}</h2>
+          <p class="exploration-tile__about">[One or two lines on what you were testing and what you learned]</p>
+        </figcaption>
+      </figure>
+    </div>
+  </main>
+  {{> contact-box}}
+  {{> site-footer}}

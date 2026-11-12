@@ -1,0 +1,15 @@
+# Downloaded tools (re-created by "npm install")
+node_modules/
+
+# The finished website (re-created by "npm run build")
+site-output/
+
+# Cloudflare's local working files
+.wrangler/
+
+# Local-only secrets, such as the test password for the confidential case study
+.dev.vars
+.env
+
+# Claude's local preview settings
+.claude/

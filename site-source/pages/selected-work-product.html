@@ -1,0 +1,23 @@
+<!--page {
+  "path": "/work/",
+  "active": "work",
+  "contactHref": "/#contact",
+  "title": "Selected work: Product design | David Okunlola",
+  "description": "Selected product design work by David Okunlola across fintech, mobility and govtech: Dukacards, Afemairide and a government project manager."
+} -->
+{{> site-header}}
+  <main id="main">
+    <div class="page-heading">
+      <h1 class="heading-2">Selected work</h1>
+      <nav class="work-tabs" aria-label="Type of work">
+        <a class="work-tab" href="/work/" aria-current="page"><img src="/icons/icon-box.svg" width="20" height="20" alt=""><span>Product Design work</span></a>
+        <a class="work-tab" href="/work/brand/"><img src="/icons/icon-swatch-book.svg" width="20" height="20" alt=""><span>Brand Design work</span></a>
+      </nav>
+    </div>
+    <div class="work-list work-list--switcher" data-work-switcher>
+    {{> work-product-list}}
+    </div>
+    <!-- Shown on phones and tablets (as in the phone design); hidden in the desktop hover layout. -->
+    {{> contact-box}}
+  </main>
+  {{> site-footer}}

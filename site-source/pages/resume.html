@@ -1,0 +1,97 @@
+<!--page {
+  "path": "/resume/",
+  "active": "resume",
+  "contactHref": "/#contact",
+  "title": "Resume | David Okunlola",
+  "description": "Resume of David Boluwatife Okunlola, Product & Brand Designer with 4+ years of experience designing 0 to 1 and scaling B2B and B2C products across web and mobile."
+} -->
+{{> site-header}}
+  <main id="main" class="resume-wrapper">
+    <div class="resume">
+      <div class="resume__heading">
+        <div>
+          <h1 class="resume__name">David Boluwatife Okunlola</h1>
+          <p class="resume__role">Product &amp; Brand Designer · [City, time zone]</p>
+        </div>
+        <!-- No PDF has been supplied yet. When there is one, save it as site-source/static/david-okunlola-resume.pdf and turn this into a real link. -->
+        <a class="button button--primary button--small button--pill" aria-disabled="true" title="The PDF is not available yet"><span>Download PDF</span><img src="/icons/icon-download-white.svg" width="20" height="20" alt=""></a>
+      </div>
+
+      <section class="resume__section" aria-labelledby="resume-about">
+        <h2 class="resume__label" id="resume-about">About</h2>
+        <p class="body-16">Product &amp; Brand Designer with 4+ years of experience designing 0→1 and scaling B2B and B2C products across web and mobile. Expertise in interaction design, design systems, and AI-enabled experiences across fintech, developer tools, and SaaS.</p>
+      </section>
+
+      <section class="resume__section" aria-labelledby="resume-contact">
+        <h2 class="resume__label" id="resume-contact">Contact</h2>
+        <dl class="resume__section">
+          <div class="resume__contact-row"><dt>Email</dt><dd><a href="mailto:{{email}}">{{email}}</a></dd><button class="copy-icon-button" type="button" data-copy-text="{{email}}" aria-label="Copy email address">
+            <img src="/icons/icon-copy-small.svg" width="16" height="16" alt="">
+            <!-- Shown for a moment after a successful copy -->
+            <span class="copy-icon-button__copied" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Copied</span>
+          </button>
+          <span class="visually-hidden" role="status" data-copy-status></span></div>
+          <div class="resume__contact-row"><dt>LinkedIn</dt><dd><a href="{{linkedinUrl}}" target="_blank" rel="noopener">{{linkedinLabel}}</a></dd></div>
+          <div class="resume__contact-row"><dt>X</dt><dd><a href="{{xUrl}}" target="_blank" rel="noopener">{{xLabel}}</a></dd></div>
+        </dl>
+      </section>
+
+      <section class="resume__section resume__section--spaced" aria-labelledby="resume-work">
+        <h2 class="resume__label" id="resume-work">Work experience</h2>
+        <article class="resume-entry">
+          <p class="resume-entry__dates">[Start] – [End]</p>
+          <div class="resume-entry__details">
+            <h3 class="resume-entry__title">Product Designer at [Company name]</h3>
+            <ul class="resume-entry__points">
+              <li>Led end-to-end design of core B2B privacy platform features used by enterprise engineering teams.</li>
+              <li>Drove a mobile app scanning feature that generated <strong>$300k of revenue</strong> within one quarter from enterprise customers.</li>
+              <li>Built and scaled a design system covering typography, color, components, and motion tokens, improving consistency across web and mobile and reducing design handoff time by <strong>over 30%</strong>.</li>
+              <li>Collaborated with engineering and PM across 3 time zones to ship complex data-heavy interfaces such as tables, bulk actions, and third-party integrations.</li>
+              <li>Assisted the design team with the revamp of the marketing website, including branding, illustrations, and web design.</li>
+            </ul>
+          </div>
+        </article>
+        <article class="resume-entry">
+          <p class="resume-entry__dates">[Start] – [End]</p>
+          <div class="resume-entry__details">
+            <h3 class="resume-entry__title">Product Designer at [Company name]</h3>
+            <ul class="resume-entry__points">
+              <li>[The main thing you owned and who used it]</li>
+              <li>[A measured result]</li>
+              <li>[How you worked with product and engineering]</li>
+            </ul>
+            <div class="resume-entry__images">
+              <div class="placeholder">Add image</div>
+              <div class="placeholder">Add image</div>
+              <div class="placeholder">Add image</div>
+            </div>
+          </div>
+        </article>
+        <article class="resume-entry">
+          <p class="resume-entry__dates">[Start] – [End]</p>
+          <div class="resume-entry__details">
+            <h3 class="resume-entry__title">Product Designer at [Company name]</h3>
+            <ul class="resume-entry__points">
+              <li>[The main thing you owned and who used it]</li>
+              <li>[A measured result]</li>
+              <li>[How you worked with product and engineering]</li>
+            </ul>
+          </div>
+        </article>
+      </section>
+
+      <section class="resume__section resume__section--spaced" aria-labelledby="resume-education">
+        <h2 class="resume__label" id="resume-education">Education</h2>
+        <article class="resume-entry">
+          <p class="resume-entry__dates">[Start] – [End]</p>
+          <div class="resume-entry__details">
+            <h3 class="resume-entry__title">Bachelor of Technology at Federal University of Technology Akure</h3>
+            <ul class="resume-entry__points">
+              <li>[Course of study]</li>
+            </ul>
+          </div>
+        </article>
+      </section>
+    </div>
+  </main>
+  {{> site-footer}}

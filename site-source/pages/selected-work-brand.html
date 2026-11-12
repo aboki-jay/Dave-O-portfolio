@@ -1,0 +1,23 @@
+<!--page {
+  "path": "/work/brand/",
+  "active": "work",
+  "contactHref": "/#contact",
+  "title": "Selected work: Brand design | David Okunlola",
+  "description": "Selected brand design work by David Okunlola, including the brand identity and guidelines for the Dukacards fintech card product."
+} -->
+{{> site-header}}
+  <main id="main">
+    <div class="page-heading">
+      <h1 class="heading-2">Selected work</h1>
+      <nav class="work-tabs" aria-label="Type of work">
+        <a class="work-tab" href="/work/"><img src="/icons/icon-box-muted.svg" width="20" height="20" alt=""><span>Product Design work</span></a>
+        <a class="work-tab" href="/work/brand/" aria-current="page"><img src="/icons/icon-swatch-book-active.svg" width="20" height="20" alt=""><span>Brand Design work</span></a>
+      </nav>
+    </div>
+    <!-- Same behaviour as the Product page: on desktop, pointing at a name shows its picture. -->
+    <div class="work-list work-list--switcher" data-work-switcher>
+    {{> work-brand-list}}
+    </div>
+    {{> contact-box}}
+  </main>
+  {{> site-footer}}

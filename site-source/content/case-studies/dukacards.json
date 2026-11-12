@@ -1,0 +1,60 @@
+{
+  "id": "dukacards",
+  "next": "afemairide",
+  "title": "Dukacards",
+  "pageTitle": "Dukacards case study",
+  "description": "Case study: Dukacards, a mobile card app and brand identity for a fintech product. Brand identity, UX and UI by David Okunlola.",
+  "lead": "[The problem you solved, in one line]",
+  "intro": "A mobile card app and brand identity for a fintech product.",
+  "facts": [
+    { "label": "Role", "value": "Brand identity, UX and UI" },
+    { "label": "Timeline", "value": "[Year]" },
+    { "label": "Team", "value": "[Team size]" },
+    { "label": "Outcome", "value": "[Add a measured result]" }
+  ],
+  "links": [],
+  "heroVisual": {
+    "image": "/images/project-art-dukacards-680w.webp",
+    "srcset": "/images/project-art-dukacards-680w.webp 680w, /images/project-art-dukacards-1360w.webp 1360w",
+    "width": 680,
+    "height": 420,
+    "alt": "Dukacards app screens: a transaction details screen, virtual cards and a freeze card prompt"
+  },
+  "goals": {
+    "heading": "What the product needed to achieve",
+    "items": [
+      "[Goal 1: who needed to do what, and why it mattered]",
+      "[Goal 2: the main constraint you had to work within]",
+      "[Goal 3: how you would measure success]"
+    ],
+    "visual": { "placeholder": "Add goals visual" }
+  },
+  "process": {
+    "heading": "How I got there",
+    "copy": ["[Two or three sentences on your research, the key decision and what changed because of it]"],
+    "caption": "[Caption: what this step shows and what changed]"
+  },
+  "solution": {
+    "heading": "[The solution, in one line]",
+    "copy": [
+      "[Explain the main flow, why you designed it this way, and the trade-offs you made]",
+      "[Explain a second decision and how it helped people]"
+    ],
+    "caption": "[Caption: the main screen and what it lets people do]",
+    "supporting": ["Add supporting visual", "Add supporting visual"]
+  },
+  "result": {
+    "heading": "What changed",
+    "copy": ["[Explain what these results meant for the team or the people using the product]"],
+    "metrics": [
+      { "value": "[Metric]", "label": "[What changed]" },
+      { "value": "[Metric]", "label": "[What changed]" },
+      { "value": "[Metric]", "label": "[What changed]" }
+    ]
+  },
+  "reflection": {
+    "heading": "What I learned",
+    "copy": ["[What worked, what you would change, and what you would do next]"],
+    "visual": { "placeholder": "Add reflection visual" }
+  }
+}

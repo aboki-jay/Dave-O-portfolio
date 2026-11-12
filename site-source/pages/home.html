@@ -1,0 +1,73 @@
+<!--page {
+  "path": "/",
+  "title": "David Okunlola | Product & Brand Designer",
+  "description": "I design fintech and SaaS products from 0 to 1, and the brands around them. Product & Brand Designer with 4+ years of experience taking products from first concept to launch."
+} -->
+{{> site-header}}
+  <main id="main">
+    <section class="hero">
+      <p class="badge-availability"><span>{{availability}}</span></p>
+      <div class="hero__message">
+        <h1 class="heading-2">I design fintech and SaaS products from 0→1, and the brands around them.</h1>
+        <p class="body-18">I’m David, a Product &amp; Brand Designer with 4+ years of experience taking products from first concept to launch.</p>
+      </div>
+      <div class="hero__actions">
+        <a class="button button--primary" href="#contact"><span>Contact me</span></a>
+        <a class="button button--secondary" href="/resume/"><span>View resume</span></a>
+      </div>
+      <div class="work-strip-scroller">
+        <div class="work-strip">
+      {{> home-work-tiles}}
+        </div>
+      </div>
+    </section>
+    <p class="view-all-work"><a class="button button--secondary button--small" href="/work/"><span>View all work</span></a></p>
+
+    <!-- Exploration shortlist: one row per exploration. Name on the left, a few words about it on the right.
+         To add one, copy a row and change the link, the name and the description. -->
+    <section class="shortlist-section" aria-labelledby="explorations-heading">
+      <h2 class="shortlist__label" id="explorations-heading">Explorations</h2>
+      <ul class="shortlist">
+        <li><a class="shortlist__row" href="/exploration/#exploration-f1"><span class="shortlist__name">Mobile app for F1 beginners</span><span class="shortlist__about">gamified concept, mobile app</span></a></li>
+        <li><a class="shortlist__row" href="/exploration/#exploration-2"><span class="shortlist__name">[Exploration title]</span><span class="shortlist__about">[what it is, in a few words]</span></a></li>
+        <li><a class="shortlist__row" href="/exploration/"><span class="shortlist__name">All explorations</span><span class="shortlist__about">ongoing</span></a></li>
+      </ul>
+    </section>
+
+    <!-- Kind words: testimonials in plain text. One shows at a time and "Next note" brings the next.
+         Each <figure> below is one note; the total in the counter is filled in automatically.
+         The photo inside each name only appears when the name is hovered or tapped. -->
+    <section class="kind-words-section" aria-labelledby="kind-words-heading">
+      <div class="kind-words">
+        <div class="kind-words__header">
+          <h2 class="kind-words__title" id="kind-words-heading">Kind words</h2>
+          <p class="kind-words__count"><span data-note-number>01</span> / <span data-note-total>03</span></p>
+        </div>
+
+        <div class="kind-notes" data-kind-notes aria-live="polite">
+          <figure class="kind-note is-active">
+            <blockquote class="kind-note__quote">“[Real quote from a PM, founder or engineer you worked with]”</blockquote>
+            <figcaption>
+              <span class="kind-note__name" tabindex="0">[Name]<img class="kind-note__photo" src="/icons/avatar-empty.svg" width="44" height="52" alt=""></span>, <span class="kind-note__role">[Role, company]</span>
+            </figcaption>
+          </figure>
+          <figure class="kind-note">
+            <blockquote class="kind-note__quote">“[A second quote: what it was like to work with you day to day]”</blockquote>
+            <figcaption>
+              <span class="kind-note__name" tabindex="0">[Name]<img class="kind-note__photo" src="/icons/avatar-empty.svg" width="44" height="52" alt=""></span>, <span class="kind-note__role">[Role, company]</span>
+            </figcaption>
+          </figure>
+          <figure class="kind-note">
+            <blockquote class="kind-note__quote">“[A third quote: the result you helped them reach]”</blockquote>
+            <figcaption>
+              <span class="kind-note__name" tabindex="0">[Name]<img class="kind-note__photo" src="/icons/avatar-empty.svg" width="44" height="52" alt=""></span>, <span class="kind-note__role">[Role, company]</span>
+            </figcaption>
+          </figure>
+        </div>
+
+        <button class="kind-words__next" type="button" data-next-note>Next note <span aria-hidden="true">→</span></button>
+      </div>
+    </section>
+  </main>
+  {{> contact-box}}
+  {{> site-footer}}

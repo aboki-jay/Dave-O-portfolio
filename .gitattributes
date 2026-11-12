@@ -1,0 +1,6 @@
+# Keep the same line endings on every computer.
+* text=auto eol=lf
+*.png binary
+*.webp binary
+*.woff2 binary
+*.ico binary

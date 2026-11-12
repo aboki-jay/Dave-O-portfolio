@@ -1,0 +1,28 @@
+<header class="site-header">
+    <a class="site-identity" href="/" aria-label="David Okunlola, home">
+      <img class="site-identity__logo" src="/images/logo-david-okunlola-96.webp" srcset="/images/logo-david-okunlola-96.webp 2x, /images/logo-david-okunlola-144.webp 3x" width="48" height="48" alt="">
+      <span>
+        <span class="site-identity__name">David Okunlola</span>
+        <span class="site-identity__role">Product &amp; Brand Designer</span>
+      </span>
+    </a>
+    <!-- Phones: the speaker and menu buttons sit together on the right. -->
+    <div class="site-header__actions">
+      <button class="sound-toggle" type="button" aria-pressed="true" aria-label="Turn sound off" data-sound-toggle>
+        <img class="sound-toggle__on" src="/icons/icon-volume-on.svg" width="20" height="20" alt="">
+        <img class="sound-toggle__off" src="/icons/icon-volume-off.svg" width="20" height="20" alt="">
+      </button>
+      <button class="menu-button" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav" data-menu-button>
+        <img src="/icons/icon-menu.svg" width="20" height="20" alt="">
+      </button>
+    </div>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      {{navLinks}}
+      <!-- Desktop: the speaker button sits between the links and Contact. -->
+      <button class="sound-toggle" type="button" aria-pressed="true" aria-label="Turn sound off" data-sound-toggle>
+        <img class="sound-toggle__on" src="/icons/icon-volume-on.svg" width="20" height="20" alt="">
+        <img class="sound-toggle__off" src="/icons/icon-volume-off.svg" width="20" height="20" alt="">
+      </button>
+      <a class="button button--primary button--small" href="{{contactHref}}"><span>Contact</span></a>
+    </nav>
+  </header>
