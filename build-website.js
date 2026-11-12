@@ -281,7 +281,7 @@ function buildPage({ meta, content }) {
     title: escapeHtml(meta.title),
     description: escapeHtml(meta.description),
     canonical,
-    robots: meta.noindex ? '<meta name="robots" content="noindex">' : "",
+    robots: meta.noindex || !SITE.showInSearchEngines ? '<meta name="robots" content="noindex">' : "",
     content: expandParts(fill(content, SITE), context),
   });
   const leftover = html.match(/\{\{[^}]*\}\}/);
@@ -313,13 +313,24 @@ for (const fileName of fs.readdirSync(path.join(SOURCE, "content", "case-studies
   built.push(buildPage(caseStudyPage(JSON.parse(read("content", "case-studies", fileName)))));
 }
 
-/* A list of pages for search engines (leaves out anything marked "noindex"). */
-const listed = built.filter((m) => !m.noindex && !m.path.endsWith(".html")).map((m) => m.path).sort();
-fs.writeFileSync(
-  path.join(OUTPUT, "sitemap.xml"),
-  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${listed.map((p) => `  <url><loc>${SITE.address}${p}</loc></url>`).join("\n")}\n</urlset>\n`
-);
-fs.writeFileSync(path.join(OUTPUT, "robots.txt"), `User-agent: *\nAllow: /\n\nSitemap: ${SITE.address}/sitemap.xml\n`);
+/* Search engines.
+   The switch is "showInSearchEngines" in site-source/content/site-details.json.
+   - false: every page carries a "noindex" tag asking search engines not to list it, there is no
+     page list for them, and a _headers file adds the same request to images and other files.
+     (Search engines are still allowed to visit; they have to, in order to see the request.)
+   - true: pages can be listed (except ones marked "noindex", such as the confidential case study),
+     and a sitemap lists them. */
+if (SITE.showInSearchEngines) {
+  const listed = built.filter((m) => !m.noindex && !m.path.endsWith(".html")).map((m) => m.path).sort();
+  fs.writeFileSync(
+    path.join(OUTPUT, "sitemap.xml"),
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${listed.map((p) => `  <url><loc>${SITE.address}${p}</loc></url>`).join("\n")}\n</urlset>\n`
+  );
+  fs.writeFileSync(path.join(OUTPUT, "robots.txt"), `User-agent: *\nAllow: /\n\nSitemap: ${SITE.address}/sitemap.xml\n`);
+} else {
+  fs.writeFileSync(path.join(OUTPUT, "robots.txt"), "User-agent: *\nAllow: /\n");
+  fs.writeFileSync(path.join(OUTPUT, "_headers"), "/*\n  X-Robots-Tag: noindex\n");
+}
 
-console.log(`Built ${built.length} pages into site-output:`);
+console.log(`Built ${built.length} pages into site-output (${SITE.showInSearchEngines ? "listed in" : "hidden from"} search engines):`);
 for (const m of built.sort((a, b) => a.path.localeCompare(b.path))) console.log("  " + m.path);

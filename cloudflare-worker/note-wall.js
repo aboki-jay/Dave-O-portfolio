@@ -47,9 +47,14 @@ async function listNotes(db) {
 }
 
 async function addNote(request, db) {
-  // Only accept posts sent from the site's own pages.
+  // Only accept posts sent from the site's own pages (or from the preview on this computer).
   const origin = request.headers.get("Origin");
-  if (origin && new URL(origin).host !== new URL(request.url).host) return json({ error: "Not allowed." }, 403);
+  if (origin) {
+    const from = new URL(origin).hostname;
+    const ownSite = from === new URL(request.url).hostname;
+    const localPreview = from === "localhost" || from === "127.0.0.1";
+    if (!ownSite && !localPreview) return json({ error: "Not allowed." }, 403);
+  }
 
   const body = await request.json().catch(() => null);
   if (!body || typeof body !== "object") return json({ error: "That note could not be read." }, 400);

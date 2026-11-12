@@ -6,6 +6,13 @@
   "name": "dave-o-portfolio",
   "compatibility_date": "2026-10-01",
 
+  // The web addresses the site answers on. Cloudflare creates the address records
+  // and the security certificate for each one automatically.
+  "routes": [
+    { "pattern": "davidokunlola.com", "custom_domain": true },
+    { "pattern": "www.davidokunlola.com", "custom_domain": true }
+  ],
+
   // Before publishing (and when previewing), put the website together from "site-source".
   // This means Cloudflare needs no extra build setting in its dashboard.
   "build": {
