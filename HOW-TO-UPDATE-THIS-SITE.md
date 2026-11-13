@@ -40,6 +40,20 @@ Once the Drive folder is connected, you do not need Claude for this.
 
 The folder link is not stored in this project. It is saved in Cloudflare as a secret called `PHOTOS_DRIVE_FOLDER`, next to a Google key called `GOOGLE_DRIVE_API_KEY`. To point the site at a different folder, change `PHOTOS_DRIVE_FOLDER` the same way as the password below.
 
+## See who visits and what they do
+
+Two free tools, each opened in its own dashboard. Neither shows anything on the site itself.
+
+- **Cloudflare Web Analytics** (dash.cloudflare.com, **Analytics & Logs**, **Web Analytics**): where visits come from, countries, devices, and the most visited pages. It uses no cookies.
+- **Microsoft Clarity** (clarity.microsoft.com): heatmaps, how far people scroll, and replays of visits, to see where people spend their time on a page.
+
+How they are set up on this site:
+
+- Clarity is told not to use cookies, so there is no cookie banner. Because of that it measures each page separately and cannot follow one visitor from page to page.
+- Clarity is skipped for visitors whose browser asks not to be tracked, and it never loads on the confidential case study.
+- The preview on your own computer is not counted. Your own visits to the live site are.
+- To switch either tool off, ask Claude. The two IDs are in `site-source/content/site-details.json`.
+
 ## Things only you can do
 
 These live in your own accounts, so Claude will tell you where to click and wait for you.

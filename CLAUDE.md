@@ -27,4 +27,6 @@ Keep it this simple: plain HTML, CSS and JavaScript, no framework, no bundler.
 - Placeholder text in square brackets is shown on purpose until he supplies real content. The site is hidden from search engines (`showInSearchEngines: false`) until then.
 - Never invent testimonials, results or biography. Ask him for the real text.
 - Breakpoints: phones up to 767px, tablets 768 to 1099px, desktop 1100px and up. Check all three, and check for sideways scrolling.
+- Visitor statistics: Cloudflare Web Analytics and Microsoft Clarity, loaded by `static/scripts/site-analytics.js` only when `cloudflareAnalyticsToken` / `clarityProjectId` are filled in `site-details.json`. David chose both tools; running Clarity without cookies (so no consent banner) and keeping it off the confidential case study was Claude's recommendation. Ask before adding cookies or a banner.
+- `wrangler dev` does not reliably pick up edits to `cloudflare-worker/*.js`; restart the preview after changing them. Its local cache lives in `.wrangler/state/v3/cache`.
 - The user-facing guide is `HOW-TO-UPDATE-THIS-SITE.md`. Keep it accurate when the workflow changes.

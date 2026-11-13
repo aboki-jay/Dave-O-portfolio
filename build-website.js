@@ -273,6 +273,15 @@ function expandParts(html, context) {
   });
 }
 
+/* Visitor statistics are only added once an ID is filled in site-details.json. See static/scripts/site-analytics.js. */
+function analyticsTag() {
+  const cloudflare = String(SITE.cloudflareAnalyticsToken || "").trim();
+  const clarity = String(SITE.clarityProjectId || "").trim();
+  if (!cloudflare && !clarity) return "";
+  const attributes = [cloudflare && `data-cloudflare-token="${escapeHtml(cloudflare)}"`, clarity && `data-clarity-project="${escapeHtml(clarity)}"`].filter(Boolean).join(" ");
+  return `<script src="/scripts/site-analytics.js" defer ${attributes}></script>`;
+}
+
 function buildPage({ meta, content }) {
   const context = { active: meta.active || "", contactHref: meta.contactHref || "#contact" };
   const canonical = SITE.address + (meta.path === "/404.html" ? "/" : meta.path);
@@ -282,6 +291,7 @@ function buildPage({ meta, content }) {
     description: escapeHtml(meta.description),
     canonical,
     robots: meta.noindex || !SITE.showInSearchEngines ? '<meta name="robots" content="noindex">' : "",
+    analytics: analyticsTag(),
     content: expandParts(fill(content, SITE), context),
   });
   const leftover = html.match(/\{\{[^}]*\}\}/);
