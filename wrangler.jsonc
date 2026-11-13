@@ -30,7 +30,7 @@
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page",
     // Only these addresses go through the code above; everything else is served directly.
-    "run_worker_first": ["/work/confidential-project", "/work/confidential-project/*", "/api/*"]
+    "run_worker_first": ["/work/confidential-project", "/work/confidential-project/*", "/api/*", "/about/", "/photos/*"]
   },
 
   // The database that stores notes left on the About page.

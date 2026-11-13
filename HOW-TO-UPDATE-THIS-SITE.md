@@ -27,6 +27,19 @@ If you ever see the old version after publishing, refresh the page once.
 
 Say "undo the last change" and Claude reverses it and publishes again. Every published version is kept, so nothing is lost.
 
+## Add or remove photos on the About page
+
+Once the Drive folder is connected, you do not need Claude for this.
+
+- **Add a photo:** drop it into your photography folder in Google Drive. It appears on the About page within about five minutes. The newest 12 are shown, newest first, and the number in the Photography tab counts every photo in the folder.
+- **Remove a photo:** delete it from the folder, or move it out.
+- **The label on a photo:** it is the file's name, so rename the file to "Casio watch" and that is what the label says. Photos still called something like IMG_1234 show no label.
+- **The icon beside the label:** it is picked from words in the name. "Flower" gets a plant, "Lagos" or "street" a city, "bird" a bird, "traffic" a car, "evening" a sunset, and so on (26 icons). A name that matches nothing gets a camera. Ask Claude to add a word or a new icon.
+- **Quality:** your originals in Drive are never changed. The site shows smaller copies sized for the page so it loads quickly.
+- **Careful:** anything in that folder is public on the site within minutes. Keep it only for photos you want shown.
+
+The folder link is not stored in this project. It is saved in Cloudflare as a secret called `PHOTOS_DRIVE_FOLDER`, next to a Google key called `GOOGLE_DRIVE_API_KEY`. To point the site at a different folder, change `PHOTOS_DRIVE_FOLDER` the same way as the password below.
+
 ## Things only you can do
 
 These live in your own accounts, so Claude will tell you where to click and wait for you.

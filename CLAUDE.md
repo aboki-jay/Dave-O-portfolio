@@ -9,7 +9,7 @@ David is a designer, not a developer. He maintains this site only by asking for 
 - `site-source/content/`: `site-details.json` (email, links, availability wording, the `showInSearchEngines` switch), `projects.json` (drives the home tiles, both work lists and "Next project"), `case-studies/*.json` (one file per case study page).
 - `site-source/static/`: styles (`styles/site.css`, one file), scripts (`site.js` for interactions, `site-sounds.js` for sounds), images, icons, fonts. Copied as they are.
 - `build-website.js`: zero-dependency Node script that assembles everything into `site-output/` (generated, not committed).
-- `cloudflare-worker/`: the only server-side code. `confidential-project-lock.js` (password gate, secret `CONFIDENTIAL_PROJECT_PASSWORD`) and `note-wall.js` (About page notes in D1, with spam limits).
+- `cloudflare-worker/`: the only server-side code. `confidential-project-lock.js` (password gate, secret `CONFIDENTIAL_PROJECT_PASSWORD`), `note-wall.js` (About page notes in D1, with spam limits) and `about-photos.js` (writes the photos from David's Google Drive folder into the About page and serves page-sized copies at `/photos/...`; secrets `PHOTOS_DRIVE_FOLDER` and `GOOGLE_DRIVE_API_KEY`; without them the built-in placeholder photos show). The Drive folder link must never appear in the repository or the pages.
 - `wrangler.jsonc`: Cloudflare settings. `wrangler deploy` and `wrangler dev` both run the build first.
 
 Keep it this simple: plain HTML, CSS and JavaScript, no framework, no bundler.

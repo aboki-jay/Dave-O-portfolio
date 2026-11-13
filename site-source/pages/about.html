@@ -8,7 +8,7 @@
   <main id="main" class="about">
     <nav class="about-tabs" aria-label="On this page" data-section-tabs>
       <a class="about-tab" href="#about-me" aria-current="true"><img src="/icons/icon-laugh.svg" width="20" height="20" alt=""><span>About me</span></a>
-      <a class="about-tab" href="#photography"><img src="/icons/icon-aperture.svg" width="20" height="20" alt=""><span>Photography</span><span class="about-tab__count">90</span></a>
+      <a class="about-tab" href="#photography"><img src="/icons/icon-aperture.svg" width="20" height="20" alt=""><span>Photography</span><span class="about-tab__count" data-photo-count>90</span></a>
       <a class="about-tab" href="#books"><img src="/icons/icon-book-open.svg" width="20" height="20" alt=""><span>Books</span><span class="about-tab__count">04</span></a>
       <a class="about-tab" href="#playlists"><img src="/icons/icon-music.svg" width="20" height="20" alt=""><span>Playlists</span></a>
       <a class="about-tab" href="#note"><img src="/icons/icon-sticky-note.svg" width="20" height="20" alt=""><span>Note</span></a>
@@ -24,7 +24,9 @@
       </section>
 
       <section id="photography" aria-label="Photography">
-        <div class="about-gallery">
+        <!-- These six are placeholders. Once the Drive folder is connected, Cloudflare swaps them (and the count in the tab above)
+             for the real photos before the page is sent. See cloudflare-worker/about-photos.js. -->
+        <div class="about-gallery" data-about-photos>
           <figure class="about-photo"><img src="/images/photo-casio-watch-420w.webp" srcset="/images/photo-casio-watch-420w.webp 420w, /images/photo-casio-watch-736w.webp 736w" sizes="(max-width: 1099px) 50vw, 418px" width="418" height="495" alt="A silver Casio watch resting on its box" decoding="async"><figcaption class="photo-tag"><span class="photo-tag__icon"><img src="/icons/photo-tag-watch.svg" width="16" height="16" alt=""></span><span class="photo-tag__label">Casio watch</span></figcaption></figure>
           <figure class="about-photo"><img src="/images/photo-casio-watch-420w.webp" srcset="/images/photo-casio-watch-420w.webp 420w, /images/photo-casio-watch-736w.webp 736w" sizes="(max-width: 1099px) 50vw, 418px" width="418" height="495" alt="A silver Casio watch resting on its box" decoding="async"><figcaption class="photo-tag"><span class="photo-tag__icon"><img src="/icons/photo-tag-watch.svg" width="16" height="16" alt=""></span><span class="photo-tag__label">Casio watch</span></figcaption></figure>
           <figure class="about-photo"><img src="/images/photo-casio-watch-420w.webp" srcset="/images/photo-casio-watch-420w.webp 420w, /images/photo-casio-watch-736w.webp 736w" sizes="(max-width: 1099px) 50vw, 418px" width="418" height="495" alt="A silver Casio watch resting on its box" loading="lazy" decoding="async"><figcaption class="photo-tag"><span class="photo-tag__icon"><img src="/icons/photo-tag-watch.svg" width="16" height="16" alt=""></span><span class="photo-tag__label">Casio watch</span></figcaption></figure>
