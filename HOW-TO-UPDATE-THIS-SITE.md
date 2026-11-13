@@ -27,6 +27,34 @@ If you ever see the old version after publishing, refresh the page once.
 
 Say "undo the last change" and Claude reverses it and publishes again. Every published version is kept, so nothing is lost.
 
+## Write or edit a case study
+
+Case studies live in Sanity, a form in your browser. You do not need Claude for the words or the pictures.
+
+1. Go to https://davidokunlola.sanity.studio and sign in.
+2. Click **Case studies**, then the one you want. To start a new one, click the pencil icon at the top of the list.
+3. Fill in the four tabs: **Listing** (the home tile and the Work lists), **Overview** (the top of the page), **Sections** (everything below it) and **Search** (what Google shows).
+4. Click **Publish** at the bottom. Until you do, your changes are a draft that only you can see.
+
+**Sections are yours to arrange.** Every case study can have different ones, in any order:
+
+- Click **Add item** and pick a kind: **Text, pictures and video**, **Numbered list** (goals, steps) or **Numbers** (up to three big figures).
+- Give it a **Section name**. This is the small label above the section and its entry in the contents list beside the page, so "First draft", "Research" or "Testing" all work.
+- Drag a section by its handle to move it. Remove one and it disappears from the page and the contents list.
+- **Pictures:** one picture shows on its own. Add two or more and visitors click through them with an arrow on a computer, or see them stacked on a phone. Each picture can have its own caption.
+- **GIFs:** add one the same way as a picture. It stays animated.
+- **Videos:** in the same list, choose **Video** and upload an MP4. It plays without sound on a loop, like a GIF, and only while it is on screen. Keep videos short and small (5 to 30 seconds, ideally under 15 MB): a screen recording as MP4 looks sharper than a GIF and is far lighter.
+- A section with no pictures is fine. On a computer the previous section's picture stays on screen beside it.
+
+Good to know:
+
+- A field you leave empty simply does not show on the page.
+- **Position on the Work page** decides the order, and which project is suggested as "Next project".
+- A new case study gets its own page, a tile on the home page and a row on the Work page.
+- To take a case study off the site, open it, click the arrow beside Publish, and choose **Unpublish**.
+- The confidential case study is not in Sanity, because Sanity's free plan lets anyone read what is stored there. Ask Claude to change that one.
+- Ask Claude if you want a new field, a different layout, or another kind of content managed this way.
+
 ## Add or remove photos on the About page
 
 Once the Drive folder is connected, you do not need Claude for this.

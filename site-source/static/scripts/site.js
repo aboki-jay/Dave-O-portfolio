@@ -5,24 +5,87 @@
 (function () {
   "use strict";
 
-  /* Phone menu: open and close */
+  /* A light tap you can feel, on phones that can do it.
+     Android phones use their vibration motor. iPhones do not let websites vibrate, but Safari gives
+     a small tick whenever a switch is flipped, so a hidden switch is flipped for a moment instead.
+     On anything else (computers, older phones) this quietly does nothing. */
+  var haptic = function () {
+    try {
+      if (navigator.vibrate) { navigator.vibrate(10); return; }
+      var label = document.createElement("label");
+      label.setAttribute("aria-hidden", "true");
+      label.style.display = "none";
+      var flip = document.createElement("input");
+      flip.type = "checkbox";
+      flip.setAttribute("switch", "");
+      label.appendChild(flip);
+      document.head.appendChild(label);
+      label.click();
+      document.head.removeChild(label);
+    } catch (error) { /* no haptics here, which is fine */ }
+  };
+
+  /* Phone menu: a sheet that slides up from the bottom. It closes with the x, a tap on the blurred
+     page behind it, a pull down on its handle, the Escape key, or by choosing a link. */
   var menuButton = document.querySelector("[data-menu-button]");
   var nav = document.getElementById("site-nav");
   if (menuButton && nav) {
-    var setMenu = function (open) {
+    var backdrop = document.querySelector("[data-menu-backdrop]");
+    var closeButton = nav.querySelector("[data-menu-close]");
+    var handle = nav.querySelector("[data-menu-handle]");
+    var phone = window.matchMedia("(max-width: 767px)");
+    var isOpen = function () { return nav.classList.contains("is-open"); };
+    var setMenu = function (open, quiet) {
+      if (open === isOpen()) return;
       nav.classList.toggle("is-open", open);
+      nav.style.transform = "";
+      if (backdrop) backdrop.classList.toggle("is-open", open);
+      document.documentElement.classList.toggle("has-open-menu", open);
       menuButton.setAttribute("aria-expanded", String(open));
       menuButton.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      if (!quiet) haptic();
+      if (open && closeButton) closeButton.focus({ preventScroll: true });
+      if (!open && !quiet && nav.contains(document.activeElement)) menuButton.focus({ preventScroll: true });
     };
-    menuButton.addEventListener("click", function () {
-      setMenu(!nav.classList.contains("is-open"));
-    });
+    menuButton.addEventListener("click", function () { setMenu(!isOpen()); });
+    if (closeButton) closeButton.addEventListener("click", function () { setMenu(false); });
+    if (backdrop) backdrop.addEventListener("click", function () { setMenu(false); });
     nav.addEventListener("click", function (event) {
-      if (event.target.closest("a")) setMenu(false);
+      if (event.target.closest("a") && isOpen()) setMenu(false);
     });
     document.addEventListener("keydown", function (event) {
       if (event.key === "Escape") setMenu(false);
     });
+    // Turning the phone or widening the window past phone size puts the links back in the header row.
+    var leavePhone = function () { if (!phone.matches) setMenu(false, true); };
+    if (phone.addEventListener) phone.addEventListener("change", leavePhone);
+
+    // Pull the handle down to close: the sheet follows the finger, and lets go past 80px closes it.
+    if (handle) {
+      var dragFrom = null;
+      var pulled = 0;
+      handle.addEventListener("pointerdown", function (event) {
+        if (!isOpen()) return;
+        dragFrom = event.clientY;
+        pulled = 0;
+        nav.classList.add("is-dragging");
+        if (handle.setPointerCapture) handle.setPointerCapture(event.pointerId);
+      });
+      handle.addEventListener("pointermove", function (event) {
+        if (dragFrom === null) return;
+        pulled = Math.max(0, event.clientY - dragFrom);
+        nav.style.transform = "translateY(" + pulled + "px)";
+      });
+      var endDrag = function () {
+        if (dragFrom === null) return;
+        dragFrom = null;
+        nav.classList.remove("is-dragging");
+        if (pulled > 80) setMenu(false);
+        else nav.style.transform = "";
+      };
+      handle.addEventListener("pointerup", endDrag);
+      handle.addEventListener("pointercancel", endDrag);
+    }
   }
 
   /* "Copy email" buttons */
@@ -212,6 +275,61 @@
     }, { passive: true });
     window.addEventListener("resize", syncStage);
     syncStage();
+  }
+
+  /* Case study galleries with more than one picture: the arrow shows the next one, and after
+     the last it goes back to the first. The caption under the gallery changes with the picture. */
+  document.addEventListener("click", function (event) {
+    var arrow = event.target.closest ? event.target.closest("[data-gallery-next]") : null;
+    if (!arrow) return;
+    var gallery = arrow.closest("[data-gallery]");
+    if (!gallery) return;
+    var slides = Array.prototype.slice.call(gallery.querySelectorAll(".case-gallery__slide"));
+    var current = Math.max(0, slides.findIndex(function (slide) { return slide.classList.contains("is-current"); }));
+    var next = (current + 1) % slides.length;
+    slides[current].classList.remove("is-current");
+    slides[next].classList.add("is-current");
+    var caption = gallery.querySelector("[data-gallery-caption]");
+    if (caption) {
+      caption.textContent = slides[next].getAttribute("data-caption") || "";
+      caption.hidden = !caption.textContent;
+    }
+  });
+
+  /* Case study videos play silently on a loop, like a GIF, but only while they can be seen:
+     on screen, in the picture area that is currently showing, and on the current gallery slide.
+     Visitors who ask their device to reduce motion get a paused video with play controls instead. */
+  var loopVideos = Array.prototype.slice.call(document.querySelectorAll("video[data-autoplay]"));
+  if (loopVideos.length) {
+    var calmer = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var canBeSeen = function (video) {
+      var box = video.getBoundingClientRect();
+      if (!box.width || !box.height) return false; // on a gallery slide that is not showing
+      if (box.bottom < 0 || box.top > window.innerHeight) return false;
+      var frame = video.closest(".case-stage .case-row__visual");
+      return !frame || frame.classList.contains("is-active");
+    };
+    var checkVideos = function () {
+      loopVideos.forEach(function (video) {
+        if (canBeSeen(video)) {
+          if (video.preload === "none") video.preload = "metadata";
+          if (!calmer && video.paused) { var started = video.play(); if (started && started.catch) started.catch(function () {}); }
+        } else if (!video.paused) {
+          video.pause();
+        }
+      });
+    };
+    if (calmer) loopVideos.forEach(function (video) { video.controls = true; });
+    var videoTimer = null;
+    var checkVideosSoon = function () {
+      if (videoTimer) return;
+      videoTimer = window.setTimeout(function () { videoTimer = null; checkVideos(); }, 150);
+    };
+    window.addEventListener("scroll", checkVideosSoon, { passive: true });
+    window.addEventListener("resize", checkVideosSoon);
+    document.addEventListener("click", function () { window.setTimeout(checkVideos, 60); });
+    window.setInterval(checkVideos, 1000); // the pinned picture area fades between sections without a scroll event of its own
+    checkVideos();
   }
 
   /* About page: highlight the side-menu item for the section in view */

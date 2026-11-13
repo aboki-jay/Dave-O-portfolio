@@ -1,6 +1,8 @@
 {
   "showInSearchEngines": false,
   "cloudflareAnalyticsToken": "a83bbd39f7f747e280ec5947b552db0c",
+  "sanityProjectId": "j5ifj8rh",
+  "sanityDataset": "production",
   "clarityProjectId": "zcv7o5desb",
   "address": "https://davidokunlola.com",
   "ownerName": "David Okunlola",

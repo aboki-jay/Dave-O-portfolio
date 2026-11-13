@@ -1,51 +1,5 @@
 [
   {
-    "id": "dukacards",
-    "name": "Dukacards",
-    "category": "Fintech",
-    "summary": "A mobile card app and brand identity for a fintech product.",
-    "role": "Brand identity, UX and UI",
-    "outcome": "[Add a measured result]",
-    "url": "/work/dukacards/",
-    "art": "image",
-    "artDescription": "Dukacards app screens: a transaction details screen, virtual cards and a freeze card prompt",
-    "tile": "dukacards",
-    "tileMeta": "Fintech · [Add a result]",
-    "lists": ["product", "brand"],
-    "brand": {
-      "summary": "Brand identity and guidelines for a fintech card product.",
-      "role": "Brand identity"
-    }
-  },
-  {
-    "id": "afemairide",
-    "name": "Afemairide",
-    "category": "Mobility",
-    "summary": "A ride-booking mobile app.",
-    "role": "[Your role on this project]",
-    "outcome": "[Add a measured result]",
-    "url": "/work/afemairide/",
-    "art": "image",
-    "artDescription": "Afemairide app: two phones showing the ride-booking map screen",
-    "tile": "afemairide",
-    "tileMeta": "Mobility · [Add a result]",
-    "lists": ["product"]
-  },
-  {
-    "id": "govtech-project-manager",
-    "name": "Govtech project manager",
-    "category": "Govtech",
-    "summary": "A SaaS tool that helps government agencies manage projects and show accountability in public.",
-    "role": "Product Designer, solo",
-    "outcome": "[Add a measured result]",
-    "url": "/work/govtech-project-manager/",
-    "art": "placeholder",
-    "artPlaceholder": "Add project visual",
-    "tile": "govtech",
-    "tileMeta": "Govtech · [Add a result]",
-    "lists": ["product"]
-  },
-  {
     "id": "confidential-project",
     "name": "Confidential project",
     "category": "NDA",
@@ -55,9 +9,12 @@
     "url": "/work/confidential-project/",
     "buttonLabel": "Enter password",
     "art": "confidential",
-    "tile": "confidential",
+    "home": true,
+    "homeOrder": 4,
     "tileMeta": "Under NDA · Password protected",
-    "lists": ["product"]
+    "lists": [
+      "product"
+    ]
   },
   {
     "id": "brand-project-placeholder",
@@ -69,6 +26,8 @@
     "url": "",
     "art": "placeholder",
     "artPlaceholder": "Add brand visual",
-    "lists": ["brand"]
+    "lists": [
+      "brand"
+    ]
   }
 ]

@@ -13,3 +13,7 @@ site-output/
 
 # Claude's local preview settings
 .claude/
+
+# The Sanity editor: its built copy and local working files
+sanity-studio/dist/
+sanity-studio/.sanity/

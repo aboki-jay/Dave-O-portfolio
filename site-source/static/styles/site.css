@@ -18,6 +18,7 @@
 
 :root {
   --color-bg: #ffffff;
+  --color-static-black: #090a0b;
   --color-fill1: #f7f7f8;
   --color-fill2: #eeeff1;
   --color-fill1-alpha: rgba(36, 46, 66, 0.04);
@@ -148,6 +149,9 @@ button { font: inherit; letter-spacing: inherit; color: inherit; background: non
 .site-nav { display: flex; align-items: center; gap: 8px; }
 .nav-link { display: inline-flex; align-items: center; padding: 6px 14px; border-radius: 70px; font-size: 14px; line-height: 20px; font-weight: 500; white-space: nowrap; transition: background-color 0.15s ease; }
 .nav-link:hover, .nav-link[aria-current="page"] { background: var(--color-fill1); }
+/* The phone menu's extra pieces are hidden everywhere else; its links sit straight in the header row. */
+.nav-backdrop, .nav-sheet__handle, .nav-sheet__top { display: none; }
+.nav-sheet__links { display: contents; }
 .site-header__actions { display: none; align-items: center; gap: 4px; }
 .menu-button { display: none; padding: 10px; border-radius: var(--radius-lg); }
 /* Speaker button: turns the interface sounds off or on (see scripts/site-sounds.js). */
@@ -166,11 +170,27 @@ button { font: inherit; letter-spacing: inherit; color: inherit; background: non
   .menu-button { display: inline-flex; }
   .sound-toggle { padding: 10px; border-radius: var(--radius-lg); }
   .site-nav .sound-toggle { display: none; }
-  /* The open phone menu was not drawn in Figma: a simple panel under the header. */
-  .site-nav { display: none; position: absolute; left: 0; right: 0; top: 100%; z-index: 20; flex-direction: column; align-items: stretch; gap: 4px; padding: 8px 16px 16px; background: var(--color-bg); border-bottom: 1px solid var(--color-border-soft); box-shadow: 0 12px 24px -12px rgba(25, 24, 27, 0.12); }
-  .site-nav.is-open { display: flex; }
-  .site-nav .nav-link { padding: 10px 14px; border-radius: var(--radius-lg); }
-  .site-nav .button { margin-top: 8px; padding: 10px 12px; }
+  /* The phone menu (Figma "New navigation", node 401:6959): a white sheet that slides up from the
+     bottom of the screen. Behind it the page is blurred. It closes with the x, a tap on the
+     blurred page, a pull down on the handle, or the Escape key. */
+  .nav-backdrop { display: block; position: fixed; inset: 0; z-index: 60; background: rgba(255, 255, 255, 0.1); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); opacity: 0; visibility: hidden; transition: opacity 0.25s ease, visibility 0s linear 0.25s; }
+  .nav-backdrop.is-open { opacity: 1; visibility: visible; transition: opacity 0.25s ease, visibility 0s; }
+  .site-nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 61; display: flex; flex-direction: column; align-items: stretch; gap: 0; padding: 0 0 max(40px, env(safe-area-inset-bottom)); background: var(--color-bg); border: 1px solid var(--color-border-soft); border-bottom: 0; border-radius: var(--radius-3xl) var(--radius-3xl) 0 0; transform: translateY(100%); visibility: hidden; transition: transform 0.3s cubic-bezier(0.4, 0, 1, 1), visibility 0s linear 0.3s; }
+  .site-nav.is-open { transform: none; visibility: visible; transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s; }
+  .site-nav.is-dragging { transition: none; }
+  .nav-sheet__handle { display: flex; justify-content: center; padding: 14px 0; touch-action: none; cursor: grab; }
+  .nav-sheet__handle span { width: 120px; height: 9px; border-radius: 40px; background: #d9d9d9; }
+  .nav-sheet__top { display: flex; justify-content: flex-end; padding: 0 20px; }
+  .nav-sheet__close { position: relative; display: inline-flex; padding: 4px; border-radius: var(--radius-2xl); background: var(--color-fill1-alpha); }
+  .nav-sheet__close::after { content: ""; position: absolute; inset: -10px; } /* a bigger area to tap than the 24px button drawn */
+  .nav-sheet__links { display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; height: min(418px, 100vh - 150px); height: min(418px, 100dvh - 150px); padding: 32px 40px; }
+  .site-nav .nav-link { padding: 12px 0; margin: -12px 0; border-radius: 0; background: none; font-size: 16px; line-height: 24px; }
+  .site-nav .nav-link:hover, .site-nav .nav-link[aria-current="page"] { background: none; }
+  .site-nav .button { align-self: stretch; margin: 0; padding: 10px 12px; background: var(--color-static-black); }
+  html.has-open-menu { overflow: hidden; }
+  @media (prefers-reduced-motion: reduce) {
+    .site-nav, .site-nav.is-open, .nav-backdrop, .nav-backdrop.is-open { transition: none; }
+  }
 }
 
 /* Contact box */
@@ -251,7 +271,8 @@ button { font: inherit; letter-spacing: inherit; color: inherit; background: non
 .work-tile--afemairide .work-tile__phone { top: 100px; width: 323px; max-width: none; margin-left: -107px; }
 .work-tile--dukacards .work-tile__media { background: #cdd3da; }
 .work-tile--dukacards .work-tile__phone { top: 104px; width: 248px; max-width: none; margin-left: -124px; }
-.work-tile--govtech .work-tile__media { background: var(--color-fill1); }
+.work-tile--plain .work-tile__media, .work-tile--picture .work-tile__media { background: var(--color-fill1); }
+.work-tile__media > .work-tile__picture { left: 0; top: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; }
 .work-tile--confidential .work-tile__media { background: var(--color-fg); }
 .work-tile--confidential .work-tile__lock { top: 208px; width: 32px; margin-left: -16px; }
 .work-tile--confidential .work-tile__title { top: 256px; color: #fff; }
@@ -264,7 +285,7 @@ button { font: inherit; letter-spacing: inherit; color: inherit; background: non
   .work-tile--afemairide:hover .work-tile__phone, .work-tile--afemairide:focus-visible .work-tile__phone { top: 34px; margin-left: -161px; }
   .work-tile--dukacards:hover .work-tile__title, .work-tile--dukacards:focus-visible .work-tile__title { top: -40px; }
   .work-tile--dukacards:hover .work-tile__phone, .work-tile--dukacards:focus-visible .work-tile__phone { top: 40px; }
-  .work-tile--govtech:hover .work-tile__note, .work-tile--govtech:focus-visible .work-tile__note { top: 160px; }
+  .work-tile--plain:hover .work-tile__note, .work-tile--plain:focus-visible .work-tile__note { top: 160px; }
   .work-tile--confidential:hover .work-tile__lock, .work-tile--confidential:focus-visible .work-tile__lock { top: 150px; }
   .work-tile--confidential:hover .work-tile__title, .work-tile--confidential:focus-visible .work-tile__title { top: 198px; }
   .work-tile--confidential .work-tile__cursor-label { top: 270px; }
@@ -407,7 +428,8 @@ button { font: inherit; letter-spacing: inherit; color: inherit; background: non
 .case-stage .case-visual--section { height: min(400px, 50vh); }
 .case-stage .case-visual--supporting { height: min(280px, 22vh); }
 .case-stage .case-gallery__slide { height: min(420px, 38vh); }
-.case-stage .case-visual--image { height: auto; }
+.case-stage .case-visual--image, .case-stage .case-gallery__slide--image { height: auto; }
+.case-stage .case-gallery__slide--image img, .case-stage .case-gallery__slide--image video { max-height: calc(100vh - 220px); object-fit: contain; }
 .case-stage .case-visual--image img { max-height: calc(100vh - 128px); object-fit: contain; }
 /* Soft fades at the top and bottom of the text column, so text eases in and out of view. */
 .case-fade { grid-column: 1; position: sticky; align-self: start; z-index: 4; height: 96px; margin-bottom: -96px; pointer-events: none; }
@@ -466,6 +488,19 @@ a.case-link:hover { color: var(--color-fg); }
 .case-gallery__frame { display: flex; align-items: center; gap: 24px; width: 100%; padding: 28px 16px; border-radius: var(--radius-lg); background: var(--color-border-soft); }
 .case-gallery__frame--plain { padding: 0; background: none; }
 .case-gallery__slide { flex: 1; height: 420px; border-radius: var(--radius-lg); background: var(--color-fill1); }
+.case-gallery__slide--image { height: auto; background: var(--color-bg); overflow: hidden; border: 1px solid var(--color-border); border-radius: var(--radius-xl); }
+.case-gallery__slide--image img, .case-gallery__slide--image video { display: block; width: 100%; height: auto; }
+.case-video { background: var(--color-fill1); aspect-ratio: auto 16 / 10; /* holds a sensible shape until the video itself has loaded */ }
+/* Two or more pictures: the slides sit in one holder. On desktop only the current one shows and the
+   arrow steps to the next. On tablets and phones (further down) they are all shown, stacked. */
+.case-gallery__slides { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 24px; }
+.case-gallery__slides .case-gallery__slide { flex: none; }
+.case-gallery__slide-caption { display: none; padding: 8px 12px 10px; }
+button.case-gallery__next { cursor: pointer; transition: background-color 0.15s ease; }
+button.case-gallery__next:hover { background: var(--color-fill1); }
+@media (min-width: 1100px) {
+  .case-gallery[data-gallery] .case-gallery__slide:not(.is-current) { display: none; }
+}
 .case-gallery__spacer { width: 40px; flex: none; }
 .case-gallery__next { display: inline-flex; margin: 10px; padding: 2px; border: 1px solid var(--color-border-soft); border-radius: 16px; background: var(--color-bg); box-shadow: var(--shadow-e1); flex: none; }
 .case-gallery__next img { width: 16px; height: 16px; }
@@ -511,6 +546,10 @@ a.case-link:hover { color: var(--color-fg); }
   .case-supporting { flex-direction: column; }
   .case-gallery__frame { padding: 0; background: none; }
   .case-gallery__spacer, .case-gallery__next { display: none; }
+  .case-gallery .case-gallery__slide--image { height: auto; border: 0; border-radius: 0; background: none; overflow: visible; }
+  .case-gallery__slide--image img, .case-gallery__slide--image video { border-radius: var(--radius-2xl); }
+  .case-gallery[data-gallery] > .case-caption { display: none; }
+  .case-gallery__slide-caption { display: block; }
   .case-gallery__slide { height: 240px; border-radius: var(--radius-2xl); }
   .case-caption { font-size: 14px; line-height: 20px; }
   .case-metric { border: 0; background: var(--color-fill1); }
@@ -532,7 +571,7 @@ a.case-link:hover { color: var(--color-fg); }
 .about-bio { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
 .about-bio .button { margin-top: 8px; }
 .about-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.about-gallery img { width: 100%; aspect-ratio: 418 / 495; object-fit: cover; border-radius: var(--radius-sm); background: var(--color-fill1); }
+.about-gallery img { width: 100%; height: auto; /* keeps the 418:495 shape at every width; without it phones showed tall, squeezed photos */ aspect-ratio: 418 / 495; object-fit: cover; border-radius: var(--radius-sm); background: var(--color-fill1); }
 
 /* Photo label: an icon and a few words about the picture. With a mouse it appears on
    hover and follows the pointer; on touch screens it sits in the bottom corner of the photo. */

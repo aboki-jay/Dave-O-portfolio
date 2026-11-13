@@ -16,7 +16,16 @@
         <img src="/icons/icon-menu.svg" width="20" height="20" alt="">
       </button>
     </div>
+    <!-- Phones: the menu is a sheet that slides up from the bottom, over a blurred copy of the page.
+         On tablets and computers the same links sit in a row in the header, and the sheet's extra
+         pieces (backdrop, handle, close button) are hidden. -->
+    <div class="nav-backdrop" data-menu-backdrop></div>
     <nav class="site-nav" id="site-nav" aria-label="Main">
+      <div class="nav-sheet__handle" data-menu-handle><span></span></div>
+      <div class="nav-sheet__top">
+        <button class="nav-sheet__close" type="button" aria-label="Close menu" data-menu-close><img src="/icons/icon-x-16.svg" width="16" height="16" alt=""></button>
+      </div>
+      <div class="nav-sheet__links">
       {{navLinks}}
       <!-- Desktop: the speaker button sits between the links and Contact. -->
       <button class="sound-toggle" type="button" aria-pressed="true" aria-label="Turn sound off" data-sound-toggle>
@@ -24,5 +33,6 @@
         <img class="sound-toggle__off" src="/icons/icon-volume-off.svg" width="20" height="20" alt="">
       </button>
       <a class="button button--primary button--small" href="{{contactHref}}"><span>Contact</span></a>
+      </div>
     </nav>
   </header>
