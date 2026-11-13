@@ -12,8 +12,10 @@
     - a faint tick while the page scrolls
   The speaker button in the navigation turns everything off or on, and the choice is remembered.
 
-  Browsers do not allow a page to make sound until the visitor has clicked, tapped or pressed a key,
-  so the very first scroll is silent.
+  Browsers do not allow a page to make sound until the visitor has clicked, tapped or pressed a key.
+  That is a browser rule and cannot be switched off, so right after a page loads (or is refreshed)
+  scrolling is silent. The first tap, click or key press anywhere on the page starts the sound;
+  it does not have to be on a button.
 */
 
 const KIT_FILE = "/scripts/audio-kit/web-kits-audio.js";
@@ -60,13 +62,18 @@ function load() {
   return loading;
 }
 
-/* Must be called from a click, tap or key press: that is when the browser lets sound start. */
-async function unlock() {
-  if (unlocked) return;
-  await load();
-  await kit.ensureReady();
-  kit.setMasterVolume(OVERALL_VOLUME);
-  unlocked = true;
+/* Must be called from a click, tap or key press: that is when the browser lets sound start.
+   When the kit has already been fetched, sound is started in the same instant as the press, which
+   is what iPhones insist on. If the kit is still on its way, it is started as soon as it arrives. */
+function unlock() {
+  if (unlocked) return Promise.resolve();
+  const start = () =>
+    kit.ensureReady().then(() => {
+      if (unlocked) return;
+      kit.setMasterVolume(OVERALL_VOLUME);
+      unlocked = true;
+    });
+  return kit ? start() : load().then(start);
 }
 
 function play(name, options, evenIfOff) {
@@ -146,8 +153,19 @@ document.addEventListener(
   },
   true
 );
-// Any key press also counts as permission to start sound.
-document.addEventListener("keydown", () => soundOn && !unlocked && unlock().catch(() => {}), { once: true, capture: true });
+// The first tap, click or key press anywhere on the page starts the sound, not only one on a
+// button or link. Each of these counts as permission in one browser or another, so all are
+// listened for until sound is running.
+const STARTING_GESTURES = ["pointerdown", "pointerup", "touchend", "click", "keydown"];
+function startOnGesture() {
+  if (!soundOn || unlocked) return;
+  unlock()
+    .then(() => {
+      if (unlocked) for (const type of STARTING_GESTURES) window.removeEventListener(type, startOnGesture, true);
+    })
+    .catch(() => {});
+}
+for (const type of STARTING_GESTURES) window.addEventListener(type, startOnGesture, { capture: true, passive: true });
 
 /* ---------- Hovering ---------- */
 
@@ -210,10 +228,11 @@ window.addEventListener(
   { passive: true }
 );
 
-/* Fetch the kit quietly once the page is idle, so the first click sounds without delay.
+/* Fetch the kit straight away, so it is ready by the time of the first tap or click.
    Then see whether the browser already allows sound. It usually does when the visitor arrived
    by clicking a link on this site, which lets hover and scroll sounds carry on from page to
-   page without another click. If it does not, the first click, tap or key press unlocks it. */
+   page without another click. If it does not (a refresh, or a first visit), the first tap,
+   click or key press anywhere on the page starts it. */
 async function tryEarlyUnlock() {
   await load();
   const started = await Promise.race([
@@ -225,7 +244,4 @@ async function tryEarlyUnlock() {
     unlocked = true;
   }
 }
-if (soundOn) {
-  const whenIdle = window.requestIdleCallback || ((callback) => setTimeout(callback, 1500));
-  whenIdle(() => tryEarlyUnlock().catch(() => {}));
-}
+if (soundOn) tryEarlyUnlock().catch(() => {});

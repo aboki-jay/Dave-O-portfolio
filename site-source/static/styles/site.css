@@ -150,7 +150,8 @@ button { font: inherit; letter-spacing: inherit; color: inherit; background: non
 .nav-link { display: inline-flex; align-items: center; padding: 6px 14px; border-radius: 70px; font-size: 14px; line-height: 20px; font-weight: 500; white-space: nowrap; transition: background-color 0.15s ease; }
 .nav-link:hover, .nav-link[aria-current="page"] { background: var(--color-fill1); }
 /* The phone menu's extra pieces are hidden everywhere else; its links sit straight in the header row. */
-.nav-backdrop, .nav-sheet__handle, .nav-sheet__top { display: none; }
+.nav-backdrop, .nav-sheet__handle, .nav-sheet__top, .nav-sheet__work { display: none; }
+.badge-category--small { padding: 2px 6px; font-size: 12px; line-height: 16px; }
 .nav-sheet__links { display: contents; }
 .site-header__actions { display: none; align-items: center; gap: 4px; }
 .menu-button { display: none; padding: 10px; border-radius: var(--radius-lg); }
@@ -187,6 +188,28 @@ button { font: inherit; letter-spacing: inherit; color: inherit; background: non
   .site-nav .nav-link { padding: 12px 0; margin: -12px 0; border-radius: 0; background: none; font-size: 16px; line-height: 24px; }
   .site-nav .nav-link:hover, .site-nav .nav-link[aria-current="page"] { background: none; }
   .site-nav .button { align-self: stretch; margin: 0; padding: 10px 12px; background: var(--color-static-black); }
+  /* The Work view (Figma "Work", node 410:7413): tapping Work swaps the links for one project at a
+     time. The sheet is never taller than 520px; the project's details scroll inside it. */
+  .site-nav { max-height: min(520px, 100vh - 40px); max-height: min(520px, 100dvh - 40px); }
+  .site-nav.is-work { height: 520px; padding-bottom: 0; }
+  .site-nav.is-work .nav-sheet__top, .site-nav.is-work .nav-sheet__links { display: none; }
+  .site-nav.is-work .nav-sheet__work { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  .sheet-project { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  .sheet-project[hidden] { display: none; }
+  .sheet-project__title-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 20px 8px; }
+  .sheet-project__title { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .sheet-project__name { font-size: 24px; line-height: 32px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sheet-project__body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 16px; padding: 12px 20px max(12px, env(safe-area-inset-bottom)); overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+  .sheet-project .project-art { flex: none; width: 100%; max-width: none; aspect-ratio: 400 / 221; border-radius: var(--radius-xl); }
+  .sheet-project__summary { font-size: 16px; line-height: 28px; color: var(--color-fg-secondary); }
+  .sheet-project__facts { display: flex; flex-direction: column; gap: 8px; }
+  .sheet-project__facts > div { display: flex; align-items: flex-start; gap: 8px; }
+  .sheet-project__facts dt { flex: none; font-size: 13px; line-height: 18px; font-weight: 500; color: var(--color-fg-secondary); white-space: nowrap; }
+  .sheet-project__facts dd { flex: 1; min-width: 0; font-size: 14px; line-height: 20px; }
+  .sheet-project__actions { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; padding-top: 12px; }
+  .site-nav .sheet-project__actions .button { align-self: auto; flex: none; margin: 0; padding: 7px 9px; background: var(--color-bg); }
+  .site-nav .sheet-project__actions .sheet-project__next { flex: 0 1 auto; min-width: 0; padding: 8px 10px; background: none; }
+  .sheet-project__next > span { overflow: hidden; text-overflow: ellipsis; }
   html.has-open-menu { overflow: hidden; }
   @media (prefers-reduced-motion: reduce) {
     .site-nav, .site-nav.is-open, .nav-backdrop, .nav-backdrop.is-open { transition: none; }

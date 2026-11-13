@@ -49,9 +49,43 @@ function renderHeader(active, contactHref) {
     ["exploration", "Exploration", "/exploration/"],
     ["resume", "Resume", "/resume/"],
   ]
-    .map(([id, label, href]) => `<a class="nav-link" href="${href}"${id === active ? ' aria-current="page"' : ""}>${label}</a>`)
+    .map(([id, label, href]) => `<a class="nav-link" href="${href}"${id === active ? ' aria-current="page"' : ""}${id === "work" ? " data-sheet-work" : ""}>${label}</a>`)
     .join("\n      ");
-  return fill(part("site-header"), { navLinks: links, contactHref });
+  return fill(part("site-header"), { navLinks: links, contactHref, workSheet: sheetWorkProjects() });
+}
+
+/* The projects shown inside the phone menu when Work is tapped: the Product design list, in the same
+   order as the Work page. Each has its picture, summary, role and outcome, a button to open the case
+   study and a button that moves to the next project without leaving the sheet. */
+function sheetWorkProjects() {
+  const list = inWorkOrder().filter((p) => p.url && p.lists.includes("product"));
+  const closeButton = `<button class="nav-sheet__close" type="button" aria-label="Close menu" data-menu-close><img src="/icons/icon-x-16.svg" width="16" height="16" alt=""></button>`;
+  return list
+    .map((p, index) => {
+      const next = list[(index + 1) % list.length];
+      return `<article class="sheet-project" data-sheet-project hidden>
+          <div class="sheet-project__title-row">
+            <div class="sheet-project__title">
+              <h2 class="sheet-project__name">${escapeHtml(p.name)}</h2>
+              ${p.category ? `<span class="badge-category badge-category--small">${escapeHtml(p.category)}</span>` : ""}
+            </div>
+            ${closeButton}
+          </div>
+          <div class="sheet-project__body">
+            ${projectArt(p, "(max-width: 767px) 100vw, 400px", false)}
+            ${p.summary ? `<p class="sheet-project__summary">${escapeHtml(p.summary)}</p>` : ""}
+            <dl class="sheet-project__facts">
+              ${p.role ? `<div><dt>Role</dt><dd>${escapeHtml(p.role)}</dd></div>` : ""}
+              ${p.outcome ? `<div><dt>Outcome</dt><dd>${escapeHtml(p.outcome)}</dd></div>` : ""}
+            </dl>
+            <div class="sheet-project__actions">
+              <a class="button button--secondary button--small" href="${p.url}"><span>${escapeHtml(p.buttonLabel || "View case study")}</span></a>
+              ${list.length > 1 ? `<button class="button button--small sheet-project__next" type="button" data-sheet-next><span>Next: ${escapeHtml(next.name)}</span></button>` : ""}
+            </div>
+          </div>
+        </article>`;
+    })
+    .join("\n        ");
 }
 
 function projectArt(p, sizes, eager) {

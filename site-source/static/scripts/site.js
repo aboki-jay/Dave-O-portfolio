@@ -33,10 +33,24 @@
     var backdrop = document.querySelector("[data-menu-backdrop]");
     var closeButton = nav.querySelector("[data-menu-close]");
     var handle = nav.querySelector("[data-menu-handle]");
+    var sheetProjects = Array.prototype.slice.call(nav.querySelectorAll("[data-sheet-project]"));
     var phone = window.matchMedia("(max-width: 767px)");
     var isOpen = function () { return nav.classList.contains("is-open"); };
+    /* Inside the sheet, Work shows the projects one at a time instead of leaving the page.
+       showProject(2) shows the third project; showProject(-1) goes back to the list of links. */
+    var showProject = function (index) {
+      var showing = index >= 0 && sheetProjects.length > 0;
+      nav.classList.toggle("is-work", showing);
+      sheetProjects.forEach(function (project, position) { project.hidden = !showing || position !== index; });
+      if (!showing) return;
+      var body = sheetProjects[index].querySelector(".sheet-project__body");
+      if (body) body.scrollTop = 0;
+      var close = sheetProjects[index].querySelector("[data-menu-close]");
+      if (close) close.focus({ preventScroll: true });
+    };
     var setMenu = function (open, quiet) {
       if (open === isOpen()) return;
+      if (open) showProject(-1); // the sheet always opens on the list of links
       nav.classList.toggle("is-open", open);
       nav.style.transform = "";
       if (backdrop) backdrop.classList.toggle("is-open", open);
@@ -48,10 +62,25 @@
       if (!open && !quiet && nav.contains(document.activeElement)) menuButton.focus({ preventScroll: true });
     };
     menuButton.addEventListener("click", function () { setMenu(!isOpen()); });
-    if (closeButton) closeButton.addEventListener("click", function () { setMenu(false); });
     if (backdrop) backdrop.addEventListener("click", function () { setMenu(false); });
     nav.addEventListener("click", function (event) {
-      if (event.target.closest("a") && isOpen()) setMenu(false);
+      if (!isOpen()) return;
+      if (event.target.closest("[data-menu-close]")) { setMenu(false); return; }
+      // "Next: …" moves to the following project, and after the last one back to the first.
+      if (event.target.closest("[data-sheet-next]")) {
+        var showingNow = sheetProjects.findIndex(function (project) { return !project.hidden; });
+        haptic();
+        showProject((showingNow + 1) % sheetProjects.length);
+        return;
+      }
+      // Work stays in the sheet and shows the first project. Every other link leaves as usual.
+      if (event.target.closest("[data-sheet-work]") && sheetProjects.length && phone.matches) {
+        event.preventDefault();
+        haptic();
+        showProject(0);
+        return;
+      }
+      if (event.target.closest("a")) setMenu(false);
     });
     document.addEventListener("keydown", function (event) {
       if (event.key === "Escape") setMenu(false);

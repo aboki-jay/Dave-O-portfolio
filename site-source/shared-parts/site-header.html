@@ -34,5 +34,10 @@
       </button>
       <a class="button button--primary button--small" href="{{contactHref}}"><span>Contact</span></a>
       </div>
+      <!-- Phones only: tapping Work in the sheet shows the projects here, one at a time, instead of
+           leaving the page. The projects are written in by build-website.js ("sheetWorkProjects"). -->
+      <div class="nav-sheet__work" data-sheet-work-view>
+        {{workSheet}}
+      </div>
     </nav>
   </header>
