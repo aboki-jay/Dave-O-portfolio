@@ -517,13 +517,17 @@ button.case-gallery__next:hover { background: var(--color-fill1); }
 @media (max-width: 1099px) {
   /* Tablet and phone: one column, following the phone case study design. */
   .case-phone-header { display: block; }
-  .case-rail { position: static; height: auto; margin: 0; padding: 16px var(--page-gutter) 0; pointer-events: auto; }
+  /* Tablets and phones: the Back button scrolls away with the page, but the contents pill (Index and
+     the reading percentage) follows you down the case study. It is "sticky" inside the case study,
+     so it stops where the case study ends, just above "Next project". */
+  .case-rail, .case-rail__inner { display: contents; }
+  .case-rail__top { padding: 16px var(--page-gutter) 0; }
   .case-row--overview { min-height: 0; }
-  .case-rail__inner { gap: 16px; width: auto; }
   .case-rail .sound-toggle { display: none; } /* the site header above already has one */
-  .case-contents { position: relative; }
+  .case-contents { position: sticky; top: max(12px, env(safe-area-inset-top)); z-index: 30; margin: 16px var(--page-gutter) 0; }
+  .case-contents__toggle { box-shadow: 0 6px 16px -6px rgba(25, 24, 27, 0.18); } /* lifts the pill off the text it floats over */
   .case-contents__list { position: absolute; top: calc(100% + 8px); left: 0; z-index: 10; min-width: 200px; padding: 16px; gap: 12px; border: 1px solid var(--color-border); border-radius: var(--radius-2xl); background: var(--color-bg); box-shadow: 0 12px 24px -12px rgba(25, 24, 27, 0.16); }
-  .case-row { display: flex; flex-direction: column; gap: 16px; padding: 20px var(--page-gutter); scroll-margin-top: 16px; }
+  .case-row { display: flex; flex-direction: column; gap: 16px; padding: 20px var(--page-gutter); scroll-margin-top: 60px; /* leaves room for the contents pill that stays at the top */ }
   .case-row--overview { gap: 40px; padding-top: 40px; }
   .case-row__text, .case-row--overview .case-row__text { display: contents; }
   .case-row__visual { padding: 0; background: none; border: 0; }
