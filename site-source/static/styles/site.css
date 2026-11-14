@@ -216,14 +216,16 @@ html.has-open-viewer { overflow: hidden; }
   .sheet-project__title-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 20px 8px; }
   .sheet-project__title { display: flex; align-items: center; gap: 12px; min-width: 0; }
   .sheet-project__name { font-size: 24px; line-height: 32px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .sheet-project__body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 16px; padding: 12px 20px max(12px, env(safe-area-inset-bottom)); overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+  .sheet-project__body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 16px; padding: 12px 20px 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
   .sheet-project .project-art { flex: none; width: 100%; max-width: none; aspect-ratio: 400 / 221; border-radius: var(--radius-xl); }
   .sheet-project__summary { font-size: 16px; line-height: 28px; color: var(--color-fg-secondary); }
-  .sheet-project__facts { display: flex; flex-direction: column; gap: 8px; }
-  .sheet-project__facts > div { display: flex; align-items: flex-start; gap: 8px; }
+  /* Role and Outcome: the label sits on its own line with the value underneath. */
+  .sheet-project__facts { display: flex; flex-direction: column; gap: 12px; }
+  .sheet-project__facts > div { display: flex; flex-direction: column; gap: 2px; }
   .sheet-project__facts dt { flex: none; font-size: 13px; line-height: 18px; font-weight: 500; color: var(--color-fg-secondary); white-space: nowrap; }
   .sheet-project__facts dd { flex: 1; min-width: 0; font-size: 14px; line-height: 20px; }
-  .sheet-project__actions { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; padding-top: 12px; }
+  /* The two buttons stay in view at the bottom of the sheet while the details above them scroll. */
+  .sheet-project__actions { position: sticky; bottom: 0; z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-top: auto; padding: 12px 0 max(12px, env(safe-area-inset-bottom)); background: var(--color-bg); }
   .site-nav .sheet-project__actions .button { align-self: auto; flex: none; margin: 0; padding: 7px 9px; background: var(--color-bg); }
   .site-nav .sheet-project__actions .sheet-project__next { flex: 0 1 auto; min-width: 0; padding: 8px 10px; background: none; }
   .sheet-project__next > span { overflow: hidden; text-overflow: ellipsis; }

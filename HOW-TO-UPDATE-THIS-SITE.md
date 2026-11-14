@@ -34,7 +34,7 @@ Case studies live in Sanity, a form in your browser. You do not need Claude for 
 1. Go to https://davidokunlola.sanity.studio and sign in.
 2. Click **Case studies**, then the one you want. To start a new one, click the pencil icon at the top of the list.
 3. Fill in the four tabs: **Listing** (the home tile and the Work lists), **Overview** (the top of the page), **Sections** (everything below it) and **Search** (what Google shows).
-4. Click **Publish** at the bottom. Until you do, your changes are a draft that only you can see.
+4. Click **Publish** at the bottom. Until you do, your changes are a draft that only you can see. Publishing rebuilds the website by itself, and the change is live in about two minutes. If it has not appeared after five, refresh the page once, then ask Claude to check.
 
 **Sections are yours to arrange.** Every case study can have different ones, in any order:
 
