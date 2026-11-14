@@ -400,8 +400,18 @@ export default defineType({
       group: 'search',
       validation: (rule) => rule.max(180).warning('Google usually cuts descriptions longer than about 160 characters.'),
     }),
+    defineField({
+      name: 'hideFromSearch',
+      title: 'Hide from search engines',
+      description:
+        'Leave this off for a finished case study. The site offers a case study to Google by itself once it has a Search description and no placeholder text in square brackets. Turn this on to keep one out of Google anyway.',
+      type: 'boolean',
+      group: 'search',
+      initialValue: false,
+    }),
   ],
 
+  // (the last field: a way to keep a finished case study out of Google)
   orderings: [{title: 'Position on the Work page', name: 'order', by: [{field: 'order', direction: 'asc'}]}],
 
   preview: {

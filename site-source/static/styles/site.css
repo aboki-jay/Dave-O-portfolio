@@ -499,6 +499,7 @@ html.has-open-viewer { overflow: hidden; }
 .case-heading { font-size: 14px; line-height: 20px; font-weight: 500; }
 .case-lead { font-size: 16px; line-height: 24px; font-weight: 500; }
 .case-copy { font-size: 14px; line-height: 24px; color: var(--color-fg-secondary); }
+.case-overview > * + * { margin-top: 8px; } /* space between the opening line and the paragraphs under it */
 .case-facts { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; padding-top: 24px; border-top: 1px solid var(--color-border); }
 .case-fact { display: flex; gap: 16px; }
 .case-fact dt { flex: none; width: 96px; padding-top: 4px; font-size: 12px; line-height: 16px; font-weight: 500; text-transform: uppercase; color: var(--color-fg-secondary); }

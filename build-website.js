@@ -192,6 +192,8 @@ const GENERATED_PARTS = {
 
 // A picture (or animated GIF), or a video. Videos carry no sound and loop like a GIF; the script
 // in site.js starts one when it comes on screen and pauses it when it leaves.
+// Text typed with a blank line in it is split into separate paragraphs.
+const paragraphsIn = (text) => String(text || "").split(/\n\s*\n/).map((part) => part.trim()).filter(Boolean);
 const casePicture = (v, lazy) =>
   v.video
     ? `<video class="case-video" src="${v.video}" muted loop playsinline preload="none" data-autoplay${v.alt ? ` aria-label="${escapeHtml(v.alt)}"` : ""}></video>`
@@ -237,7 +239,7 @@ function caseSection(section) {
   const text = [];
   if (section.heading) text.push(`<p class="case-heading">${escapeHtml(section.heading)}</p>`);
   if ((section.items || []).length) text.push(`<ol class="case-goals">\n          ${section.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("\n          ")}\n        </ol>`);
-  for (const paragraph of section.copy || []) text.push(`<p class="case-copy">${escapeHtml(paragraph)}</p>`);
+  for (const paragraph of (section.copy || []).flatMap(paragraphsIn)) text.push(`<p class="case-copy">${escapeHtml(paragraph)}</p>`);
   const metrics = section.metrics || [];
   const visual =
     section.visualHtml !== undefined
@@ -331,8 +333,8 @@ function caseStudyPage(study) {
         <h1 class="case-title">${escapeHtml(study.title)}</h1>
         <div class="case-overview">
           <p class="case-eyebrow case-eyebrow--phone-only">Overview</p>
-          ${study.lead ? `<p class="case-lead">${escapeHtml(study.lead)}</p>` : ""}
-          ${study.intro ? `<p class="case-copy">${escapeHtml(study.intro)}</p>` : ""}
+          ${paragraphsIn(study.lead).map((text) => `<p class="case-lead">${escapeHtml(text)}</p>`).join("\n          ")}
+          ${paragraphsIn(study.intro).map((text) => `<p class="case-copy">${escapeHtml(text)}</p>`).join("\n          ")}
         </div>
         <dl class="case-facts">
             ${facts}${links ? `\n            <div class="case-fact"><dt>Links</dt><dd class="case-links">\n              ${links}\n            </dd></div>` : ""}
@@ -345,7 +347,7 @@ function caseStudyPage(study) {
     </div>
   </main>
 
-  <section class="next-project" aria-labelledby="next-project-heading">
+  <section class="next-project" aria-labelledby="next-project-heading" data-nosnippet>
     <h2 class="heading-4" id="next-project-heading">Next project</h2>
     ${projectRow(next)}
   </section>
@@ -358,6 +360,10 @@ function caseStudyPage(study) {
       title: `${study.pageTitle || study.title} | David Okunlola`,
       description: study.description,
       noindex: Boolean(study.confidential),
+      readyForSearch: Boolean(study.readyForSearch),
+      previewPicture: study.previewPicture || "",
+      previewAlt: study.previewAlt || "",
+      article: study.fromSanity ? { headline: study.title, updated: study.updated || "" } : null,
       bareShell: true,
     },
     content,
@@ -464,7 +470,16 @@ function fromSanity(doc, local) {
     links: list(doc.links).filter((link) => link.label).map((link) => ({ label: link.label, url: link.url || "", icon: link.icon || "figma" })),
     heroVisual: sectionPicture(doc.heroPicture) || { placeholder: "Add hero visual" },
     sections,
+    fromSanity: true,
+    updated: doc._updatedAt || "",
   };
+  // The picture shown when the link is shared, and to Google: the main picture, or else the cover, cut to 1200 x 630.
+  const preview = sanityPicture(doc.heroPicture, { widths: [1200], shape: 1200 / 630 }) || sanityPicture(doc.cover, { widths: [1200], shape: 1200 / 630 });
+  if (preview) Object.assign(study, { previewPicture: preview.image, previewAlt: (doc.heroPicture && doc.heroPicture.alt) || (doc.cover && doc.cover.alt) || "" });
+  // A case study is offered to search engines once it has real content: no square-bracket placeholder
+  // text anywhere, a search description, and "Hide from search engines" not ticked in Sanity.
+  const hasPlaceholderText = /\[[A-Z][^\]"]{2,}\]/.test(JSON.stringify(doc));
+  study.readyForSearch = !hasPlaceholderText && Boolean(doc.searchDescription) && doc.hideFromSearch !== true;
   return { project, study };
 }
 
@@ -491,6 +506,17 @@ function analyticsTag() {
   return `<script src="/scripts/site-analytics.js" defer ${attributes}></script>`;
 }
 
+/* May search engines list this page?
+   - Pages marked "noindex" (the confidential case study, the not-found page) never.
+   - When "showInSearchEngines" in site-details.json is true, every other page.
+   - While it is false, only pages that are ready: a Sanity case study with real content (see
+     fromSanity), or a page whose address is in "pagesShownInSearchEngines" in site-details.json. */
+function listedInSearch(meta) {
+  if (meta.noindex) return false;
+  if (SITE.showInSearchEngines) return true;
+  return meta.readyForSearch === true || (SITE.pagesShownInSearchEngines || []).includes(meta.path);
+}
+
 function buildPage({ meta, content }) {
   const context = { active: meta.active || "", contactHref: meta.contactHref || "#contact" };
   const canonical = SITE.address + (meta.path === "/404.html" ? "/" : meta.path);
@@ -499,7 +525,22 @@ function buildPage({ meta, content }) {
     title: escapeHtml(meta.title),
     description: escapeHtml(meta.description),
     canonical,
-    robots: meta.noindex || !SITE.showInSearchEngines ? '<meta name="robots" content="noindex">' : "",
+    robots: listedInSearch(meta) ? "" : '<meta name="robots" content="noindex">',
+    previewPicture: meta.previewPicture || `${SITE.address}/images/link-preview.png`,
+    previewAlt: escapeHtml(meta.previewAlt || `${SITE.ownerName}: I design fintech and SaaS products from 0 to 1, and the brands around them.`),
+    // A short description of the page in the form Google reads directly ("structured data").
+    structuredData: meta.article
+      ? `<script type="application/ld+json">${JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Article",
+          headline: meta.article.headline,
+          description: meta.description,
+          ...(meta.previewPicture ? { image: [meta.previewPicture.replace(/&amp;/g, "&")] } : {}),
+          ...(meta.article.updated ? { dateModified: meta.article.updated } : {}),
+          author: { "@type": "Person", name: SITE.ownerName, url: SITE.address },
+          mainEntityOfPage: canonical,
+        }).replace(/</g, "\\u003c")}</script>`
+      : "",
     analytics: analyticsTag(),
     content: expandParts(fill(content, SITE), context),
   });
@@ -509,6 +550,7 @@ function buildPage({ meta, content }) {
   const target = path.join(OUTPUT, file);
   fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.writeFileSync(target, html.replace(/\n\s*\n\s*\n/g, "\n\n"));
+  meta.listed = listedInSearch(meta);
   return meta;
 }
 
@@ -557,26 +599,25 @@ for (const study of studies.values()) {
 }
 
 /* Search engines.
-   The switch is "showInSearchEngines" in site-source/content/site-details.json.
-   - false: every page carries a "noindex" tag asking search engines not to list it, there is no
-     page list for them, and a _headers file adds the same request to images and other files.
-     (Search engines are still allowed to visit; they have to, in order to see the request.)
-   - true: pages can be listed (except ones marked "noindex", such as the confidential case study),
-     and a sitemap lists them. */
-if (SITE.showInSearchEngines) {
-  const listed = built.filter((m) => !m.noindex && !m.path.endsWith(".html")).map((m) => m.path).sort();
+   Each page decides for itself whether it may be listed (see listedInSearch above).
+   - A page that may NOT be listed carries a "noindex" tag, and a _headers file repeats the request
+     for that page's address. (Search engines are still allowed to visit; they have to, to see it.)
+   - Pages that may be listed are named in sitemap.xml, which robots.txt points to.
+   - While the whole-site switch is off, the site's own images are also kept out of image search. */
+const listed = built.filter((m) => m.listed && !m.path.endsWith(".html")).map((m) => m.path).sort();
+const hidden = built.filter((m) => !m.listed).map((m) => m.path).sort();
+if (listed.length) {
   fs.writeFileSync(
     path.join(OUTPUT, "sitemap.xml"),
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${listed.map((p) => `  <url><loc>${SITE.address}${p}</loc></url>`).join("\n")}\n</urlset>\n`
   );
-  fs.writeFileSync(path.join(OUTPUT, "robots.txt"), `User-agent: *\nAllow: /\n\nSitemap: ${SITE.address}/sitemap.xml\n`);
-} else {
-  fs.writeFileSync(path.join(OUTPUT, "robots.txt"), "User-agent: *\nAllow: /\n");
-  fs.writeFileSync(path.join(OUTPUT, "_headers"), "/*\n  X-Robots-Tag: noindex\n");
 }
+fs.writeFileSync(path.join(OUTPUT, "robots.txt"), `User-agent: *\nAllow: /\n${listed.length ? `\nSitemap: ${SITE.address}/sitemap.xml\n` : ""}`);
+const noindexFor = [...hidden, ...(SITE.showInSearchEngines ? [] : ["/images/*", "/photos/*"])];
+if (noindexFor.length) fs.writeFileSync(path.join(OUTPUT, "_headers"), noindexFor.map((p) => `${p}\n  X-Robots-Tag: noindex\n`).join("\n"));
 
-console.log(`Built ${built.length} pages into site-output (${SITE.showInSearchEngines ? "listed in" : "hidden from"} search engines):`);
-for (const m of built.sort((a, b) => a.path.localeCompare(b.path))) console.log("  " + m.path);
+console.log(`Built ${built.length} pages into site-output. Search engines may list ${listed.length}:`);
+for (const m of built.sort((a, b) => a.path.localeCompare(b.path))) console.log(`  ${m.listed ? "listed " : "hidden "} ${m.path}`);
 if (SANITY.projectId) console.log(`Case studies from Sanity: ${fromSanityCount}`);
 }
 

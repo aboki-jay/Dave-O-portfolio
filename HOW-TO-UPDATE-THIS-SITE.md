@@ -104,7 +104,10 @@ Or ask Claude which notes are there and it will guide you.
 
 ## Things to ask Claude for when you are ready
 
-- **"Let search engines list the site."** The site is currently hidden from Google and other search engines because it still has placeholder text. It is one switch.
+- **"Let search engines list the site."** Most of the site is hidden from Google and other search engines because it still has placeholder text. Opening the whole site is one switch. Until then, pages are opened one by one:
+  - **A case study in Sanity opens by itself** once it has a **Search description** and no placeholder text in square brackets. To keep a finished one out of Google, turn on **Hide from search engines** in its Search tab.
+  - **Any other page** (Home, About, Resume and so on): ask Claude to "let search engines list the About page".
+  - Google finds new pages faster if you tell it. Ask Claude for the steps to add the site to Google Search Console.
 - **"Add a case study"** or **"add a testimonial"**: send the text and images.
 - **"Here is my new resume"**: the Download PDF button fetches the PDF from your Google Drive. If you replace the file in Drive with **Manage versions** (right-click the file, **File information**, **Manage versions**, **Upload new version**), the button keeps working with nothing to publish. If you upload it as a brand new file instead, send Claude the new share link.
 - **"Turn the sounds down"**, or off by default.
