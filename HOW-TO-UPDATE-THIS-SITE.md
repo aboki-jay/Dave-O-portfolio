@@ -114,7 +114,6 @@ Or ask Claude which notes are there and it will guide you.
 - Real quotes, names and roles for the three **Kind words** notes
 - Results and metrics marked `[Add a result]` and `[Metric]`
 - Case study text and visuals for Dukacards, Afemairide, the Govtech project and the confidential project
-- Resume page: three images each for the ZST Technologies and Provenier entries
 - Links for "Stigdata - Funding source", "Prototype", and each exploration
 - Real photos and captions for the About page, and pictures or videos for the Exploration tiles
 

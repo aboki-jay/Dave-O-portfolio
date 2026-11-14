@@ -147,8 +147,13 @@
       close.className = "image-viewer__close";
       close.setAttribute("aria-label", "Close full view");
       close.innerHTML = '<img src="/icons/icon-x-16.svg" width="16" height="16" alt="">';
-      var large = item.cloneNode(true);
-      large.classList.add("image-viewer__item");
+      // A tile holds a cropped screenshot; the full view shows the whole screenshot, uncropped.
+      var picture = item.tagName === "IMG" ? item : item.querySelector("img");
+      var large = (picture || item).cloneNode(true);
+      large.className = picture ? "image-viewer__item" : large.className + " image-viewer__item";
+      large.removeAttribute("style");
+      // A very tall screenshot (a long phone screen) is shown at full width and scrolled, so it stays readable.
+      if (picture && Number(picture.getAttribute("height")) > 2 * Number(picture.getAttribute("width"))) viewer.classList.add("is-tall");
       large.removeAttribute("role");
       large.removeAttribute("tabindex");
       large.removeAttribute("aria-label");

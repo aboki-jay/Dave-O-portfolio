@@ -115,7 +115,9 @@ button { font: inherit; letter-spacing: inherit; color: inherit; background: non
 .image-viewer.is-open { opacity: 1; }
 .image-viewer__item { max-width: 100%; max-height: 100%; cursor: default; transform: scale(0.96); transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
 .image-viewer.is-open .image-viewer__item { transform: none; }
-.image-viewer img.image-viewer__item { width: auto; height: auto; object-fit: contain; border-radius: var(--radius-2xl); }
+.image-viewer img.image-viewer__item { width: auto; height: auto; object-fit: contain; border-radius: var(--radius-xl); background: var(--color-fill1); /* some screenshots have see-through edges */ }
+.image-viewer.is-tall { align-items: flex-start; overflow-y: auto; overscroll-behavior: contain; }
+.image-viewer.is-tall img.image-viewer__item { width: 100%; max-width: 420px; max-height: none; margin: 0 auto; }
 .image-viewer .placeholder.image-viewer__item { width: 100%; max-width: 560px; aspect-ratio: 4 / 3; border-radius: var(--radius-2xl); }
 .image-viewer__close { position: absolute; top: 16px; right: 16px; display: inline-flex; padding: 4px; border-radius: var(--radius-2xl); background: var(--color-bg); box-shadow: var(--shadow-e1); }
 .image-viewer__close::after { content: ""; position: absolute; inset: -10px; }
@@ -764,6 +766,10 @@ a.exploration-tile__link::after { content: ""; position: absolute; inset: 0; }
 .resume-entry__points strong { font-weight: 500; color: var(--color-fg); }
 .resume-entry__images { display: flex; flex-wrap: wrap; gap: 16px; padding-top: 8px; }
 .resume-entry__images .placeholder { width: 200px; height: 150px; border-radius: var(--radius-2xl); }
+/* A work screenshot on the Resume page: a grey rounded tile with the screenshot placed inside it the
+   way the Figma frame places it (set per tile as --left, --top and --width, in percent of the tile). */
+.resume-shot { position: relative; flex: none; width: 200px; height: 150px; overflow: hidden; border-radius: var(--radius-2xl); background: var(--color-fill1); }
+.resume-shot img { position: absolute; left: var(--left, 0); top: var(--top, 0); width: var(--width, 100%); max-width: none; height: auto; border-radius: var(--corner, 0); }
 @media (max-width: 767px) {
   .resume-wrapper { padding: 24px 16px 32px; }
   .resume { gap: 32px; }
