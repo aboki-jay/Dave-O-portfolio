@@ -197,7 +197,7 @@ const paragraphsIn = (text) => String(text || "").split(/\n\s*\n/).map((part) =>
 const casePicture = (v, lazy) =>
   v.video
     ? `<video class="case-video" src="${v.video}" muted loop playsinline preload="none" data-autoplay${v.alt ? ` aria-label="${escapeHtml(v.alt)}"` : ""}></video>`
-    : `<img src="${v.image}" ${v.srcset ? `srcset="${v.srcset}" sizes="(max-width: 1099px) 100vw, 592px" ` : ""}width="${v.width}" height="${v.height}" alt="${escapeHtml(v.alt || "")}"${lazy ? ' loading="lazy"' : ""} decoding="async">`;
+    : `<img src="${v.image}" ${v.srcset ? `srcset="${v.srcset}" sizes="(max-width: 1099px) 100vw, 50vw" ` : ""}width="${v.width}" height="${v.height}" alt="${escapeHtml(v.alt || "")}"${lazy ? ' loading="lazy"' : ""} decoding="async">`;
 // One picture in a card, or a grey box with a note until there is one.
 const caseBox = (v, kind) => (v && v.image ? `<div class="case-visual case-visual--image">${casePicture(v)}</div>` : `<div class="case-visual case-visual--${kind}">${escapeHtml(v.placeholder)}</div>`);
 const caseCaption = (text) => (text ? `<figcaption class="case-caption">${escapeHtml(text)}</figcaption>` : "");
@@ -228,7 +228,7 @@ function sectionPictures(section) {
           <div class="case-gallery__frame"><span class="case-gallery__spacer"></span><div class="case-gallery__slides">
             ${slides}
           </div><button class="case-gallery__next" type="button" aria-label="Show the next picture" data-gallery-next>${NEXT_ARROW}</button></div>
-          <figcaption class="case-caption" data-gallery-caption${pictures[0].caption ? "" : " hidden"}>${escapeHtml(pictures[0].caption || "")}</figcaption>
+          <figcaption class="case-caption"><span class="case-gallery__count" data-gallery-count>1 / ${pictures.length}</span><span data-gallery-caption>${escapeHtml(pictures[0].caption || "")}</span></figcaption>
         </figure>`);
   }
   if ((section.supporting || []).length) parts.push(caseSupporting(section.supporting));
@@ -420,7 +420,7 @@ function sanityVideo(file) {
 function fromSanity(doc, local) {
   const id = doc.slug.current;
   const list = (value) => (Array.isArray(value) ? value.filter(Boolean) : []);
-  const sectionPicture = (picture) => sanityPicture(picture, { widths: [592, 800, 1184, 1600] });
+  const sectionPicture = (picture) => sanityPicture(picture, { widths: [592, 800, 1184, 1600, 2400] });
 
   const project = {
     ...(local || {}),

@@ -120,7 +120,8 @@
   /* Image rows (the Resume page): on phones, tapping an image shows it full size over the page.
      A tap anywhere outside the image, the x button or the Escape key puts things back. */
   var imageRows = document.querySelectorAll("[data-image-row]");
-  if (imageRows.length) {
+  var caseStudyPage = document.querySelector(".case-study");
+  if (imageRows.length || caseStudyPage) {
     var viewerPhone = window.matchMedia("(max-width: 767px)");
     var viewer = null;
     var cameFrom = null;
@@ -184,6 +185,13 @@
         if (item) { event.preventDefault(); openViewer(item); }
       });
     });
+    // Case study pictures: a click on any of them shows it full size, on every screen size.
+    if (caseStudyPage) {
+      caseStudyPage.addEventListener("click", function (event) {
+        var target = event.target;
+        if (target && target.tagName === "IMG" && target.closest(".case-visual--image, .case-gallery__slide--image")) openViewer(target);
+      });
+    }
     document.addEventListener("keydown", function (event) {
       if (event.key === "Escape") closeViewer();
     });
@@ -391,10 +399,9 @@
     slides[current].classList.remove("is-current");
     slides[next].classList.add("is-current");
     var caption = gallery.querySelector("[data-gallery-caption]");
-    if (caption) {
-      caption.textContent = slides[next].getAttribute("data-caption") || "";
-      caption.hidden = !caption.textContent;
-    }
+    if (caption) caption.textContent = slides[next].getAttribute("data-caption") || "";
+    var count = gallery.querySelector("[data-gallery-count]");
+    if (count) count.textContent = next + 1 + " / " + slides.length;
   });
 
   /* Case study videos play silently on a loop, like a GIF, but only while they can be seen:
