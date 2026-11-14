@@ -117,6 +117,73 @@
     }
   }
 
+  /* Image rows (the Resume page): on phones, tapping an image shows it full size over the page.
+     A tap anywhere outside the image, the x button or the Escape key puts things back. */
+  var imageRows = document.querySelectorAll("[data-image-row]");
+  if (imageRows.length) {
+    var viewerPhone = window.matchMedia("(max-width: 767px)");
+    var viewer = null;
+    var cameFrom = null;
+    var closeViewer = function () {
+      if (!viewer) return;
+      var closing = viewer;
+      viewer = null;
+      closing.classList.remove("is-open");
+      document.documentElement.classList.remove("has-open-viewer");
+      haptic();
+      window.setTimeout(function () { closing.remove(); }, 220);
+      if (cameFrom && cameFrom.focus) cameFrom.focus({ preventScroll: true });
+    };
+    var openViewer = function (item) {
+      if (viewer) return;
+      cameFrom = item;
+      viewer = document.createElement("div");
+      viewer.className = "image-viewer";
+      viewer.setAttribute("role", "dialog");
+      viewer.setAttribute("aria-modal", "true");
+      viewer.setAttribute("aria-label", "Image, full view");
+      var close = document.createElement("button");
+      close.type = "button";
+      close.className = "image-viewer__close";
+      close.setAttribute("aria-label", "Close full view");
+      close.innerHTML = '<img src="/icons/icon-x-16.svg" width="16" height="16" alt="">';
+      var large = item.cloneNode(true);
+      large.classList.add("image-viewer__item");
+      large.removeAttribute("role");
+      large.removeAttribute("tabindex");
+      large.removeAttribute("aria-label");
+      if (large.tagName === "IMG") { large.removeAttribute("loading"); large.sizes = "100vw"; } // lets the browser fetch a sharper copy
+      viewer.appendChild(close);
+      viewer.appendChild(large);
+      // Anything that is not the image itself counts as "outside".
+      viewer.addEventListener("click", function (event) {
+        if (event.target.closest(".image-viewer__item")) return;
+        closeViewer();
+      });
+      document.body.appendChild(viewer);
+      document.documentElement.classList.add("has-open-viewer");
+      haptic();
+      viewer.offsetWidth; // lets the fade-in start from invisible
+      viewer.classList.add("is-open");
+      close.focus({ preventScroll: true });
+    };
+    imageRows.forEach(function (row) {
+      row.addEventListener("click", function (event) {
+        if (!viewerPhone.matches) return;
+        var item = event.target.closest("[data-image-row] > *");
+        if (item) openViewer(item);
+      });
+      row.addEventListener("keydown", function (event) {
+        if (!viewerPhone.matches || (event.key !== "Enter" && event.key !== " ")) return;
+        var item = event.target.closest("[data-image-row] > *");
+        if (item) { event.preventDefault(); openViewer(item); }
+      });
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") closeViewer();
+    });
+  }
+
   /* "Copy email" buttons */
   document.querySelectorAll("[data-copy-text]").forEach(function (button) {
     button.addEventListener("click", function () {
