@@ -14,8 +14,12 @@
         <a class="work-tab" href="/work/brand/"><img src="/icons/icon-swatch-book.svg" width="20" height="20" alt=""><span>Brand Design work</span></a>
       </nav>
     </div>
+    <!-- Desktop: the list stays in place while the page scrolls, and each stretch of scrolling moves to
+         the next project (see "Selected work" in site.js). Phones and tablets ignore this wrapper. -->
+    <div class="work-scroll" data-work-scroll>
     <div class="work-list work-list--switcher" data-work-switcher>
     {{> work-product-list}}
+    </div>
     </div>
     <!-- Shown on phones and tablets (as in the phone design); hidden in the desktop hover layout. -->
     {{> contact-box}}

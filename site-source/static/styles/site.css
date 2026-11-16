@@ -260,6 +260,10 @@ html.has-open-viewer { overflow: hidden; }
 .project-row { display: flex; align-items: center; gap: 64px; padding: 48px 0; }
 .project-row + .project-row { border-top: 1px solid var(--color-border-soft); }
 .project-row__details { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
+/* The picture's wrapper and link take no space of their own, except on the desktop Work page (further
+   down), where the wrapper holds the picture with a line and a button under it. */
+.project-row__stage, .project-art-link { display: contents; }
+.project-row__peek { display: none; }
 .project-row__title-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
 .project-row__title { font-size: 32px; line-height: 40px; font-weight: 500; }
 .project-row__facts { display: flex; gap: 24px; width: 100%; }
@@ -401,8 +405,10 @@ html.has-open-viewer { overflow: hidden; }
 /* Desktop with a mouse: project names on the left, one picture on the right that
    changes as you point at a name. Everywhere else: the normal stacked list. */
 @media (hover: hover) and (min-width: 1100px) {
-  .work-list--switcher { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 24px; min-height: 564px; padding-top: 48px; padding-bottom: 96px; }
-  .work-list--switcher + .contact-section { display: none; } /* the desktop design ends at the list */
+  .work-list--switcher { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 24px; min-height: 624px; padding-top: 48px; padding-bottom: 96px; }
+  .work-scroll + .contact-section { display: none; } /* the desktop design ends at the list */
+  /* While the page scrolls, the list stays put and the projects change (set up by site.js). */
+  .work-scroll.is-stepping .work-list--switcher { position: sticky; top: var(--stick-top, 16px); }
   .work-list--switcher .project-row { display: block; padding: 0; border: 0; }
   /* The picture takes 54.5% of the width (680px at most) and the names keep to the space left of it,
      with a 64px gap. A long name wraps onto a second line, and is cut with "…" if it would need a
@@ -414,10 +420,17 @@ html.has-open-viewer { overflow: hidden; }
   .work-list--switcher .project-row__title { display: flex; align-items: flex-start; gap: 8px; min-width: 0; color: var(--color-fg-tertiary); transition: color 0.15s ease; }
   .work-list--switcher .project-row__title > a { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; min-width: 0; overflow-wrap: break-word; }
   .work-list--switcher .project-row__title::before { content: ""; width: 12px; height: 12px; flex: none; margin-top: 14px; border-radius: 50%; background: var(--color-fg); opacity: 0; transition: opacity 0.15s ease; }
-  .work-list--switcher .project-art { position: absolute; right: var(--page-gutter); top: 48px; width: min(680px, calc((100% - 2 * var(--page-gutter)) * 0.545)); opacity: 0; visibility: hidden; transition: opacity 0.2s ease, visibility 0.2s; }
+  .work-list--switcher .project-row__stage { position: absolute; right: var(--page-gutter); top: 48px; display: flex; flex-direction: column; gap: 16px; width: min(680px, calc((100% - 2 * var(--page-gutter)) * 0.545)); opacity: 0; visibility: hidden; transition: opacity 0.2s ease, visibility 0.2s; }
+  .work-list--switcher .project-art-link { display: block; border-radius: var(--radius-3xl); }
+  .work-list--switcher .project-art { width: 100%; max-width: none; transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+  .work-list--switcher .project-art-link:hover .project-art { transform: scale(1.01); }
+  /* Under the picture: one line about the project, and the button that opens it. */
+  .work-list--switcher .project-row__peek { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .work-list--switcher .project-row__peek-text { min-width: 0; font-size: 14px; line-height: 20px; color: var(--color-fg-secondary); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+  .work-list--switcher .project-row__peek .button { flex: none; }
   .work-list--switcher .project-row.is-active .project-row__title { color: var(--color-fg); font-weight: 600; }
   .work-list--switcher .project-row.is-active .project-row__title::before { opacity: 1; }
-  .work-list--switcher .project-row.is-active .project-art { opacity: 1; visibility: visible; }
+  .work-list--switcher .project-row.is-active .project-row__stage { opacity: 1; visibility: visible; }
 }
 @media (max-width: 767px) {
   .page-heading { flex-direction: column; align-items: flex-start; padding: 24px 16px 16px; }

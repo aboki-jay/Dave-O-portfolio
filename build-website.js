@@ -108,6 +108,9 @@ function projectRow(p, overrides = {}, eager = false) {
   const link = item.url
     ? (cls) => `<a class="button ${cls}" href="${item.url}"><span>${buttonLabel}</span></a>`
     : (cls) => `<a class="button ${cls}" aria-disabled="true" title="This case study is not ready yet"><span>${buttonLabel}</span></a>`;
+  // The picture opens the case study too. On the desktop Work page a short line and a button sit under
+  // it, so it is clear the project can be opened; other layouts already show their own button.
+  const art = projectArt(item, "(max-width: 767px) 100vw, (max-width: 1099px) 48vw, 680px", eager);
   return `<article class="project-row" data-project="${item.id}">
       <div class="project-row__details">
         <div class="project-row__title-row">
@@ -122,7 +125,13 @@ function projectRow(p, overrides = {}, eager = false) {
         ${link("button--primary button--when-desktop")}
         ${link("button--secondary button--small button--when-phone")}
       </div>
-      ${projectArt(item, "(max-width: 767px) 100vw, (max-width: 1099px) 48vw, 680px", eager)}
+      <div class="project-row__stage">
+        ${item.url ? `<a class="project-art-link" href="${item.url}" tabindex="-1" aria-hidden="true">${art}</a>` : art}
+        <div class="project-row__peek">
+          <p class="project-row__peek-text">${escapeHtml(item.summary)}</p>
+          ${link("button--primary button--small")}
+        </div>
+      </div>
     </article>`;
 }
 

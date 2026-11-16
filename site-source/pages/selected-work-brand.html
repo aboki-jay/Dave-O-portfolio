@@ -15,8 +15,12 @@
       </nav>
     </div>
     <!-- Same behaviour as the Product page: on desktop, pointing at a name shows its picture. -->
+    <!-- Desktop: the list stays in place while the page scrolls, and each stretch of scrolling moves to
+         the next project (see "Selected work" in site.js). Phones and tablets ignore this wrapper. -->
+    <div class="work-scroll" data-work-scroll>
     <div class="work-list work-list--switcher" data-work-switcher>
     {{> work-brand-list}}
+    </div>
     </div>
     {{> contact-box}}
   </main>

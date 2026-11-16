@@ -267,6 +267,47 @@
       row.addEventListener("focusin", function () { activate(row); });
     });
     if (rows.length) activate(rows[0]);
+
+    /* Desktop: scrolling the page also steps through the projects, one at a time. The list is given
+       extra room to scroll through (a little over a quarter of the screen per project) and stays in
+       place meanwhile. Pointing at a name still works, and so does the keyboard. On phones and
+       tablets, and on a screen too short to hold the whole list, none of this happens. */
+    var track = switcher.parentElement && switcher.parentElement.hasAttribute("data-work-scroll") ? switcher.parentElement : null;
+    if (track && rows.length > 1) {
+      var stepLayout = window.matchMedia("(hover: hover) and (min-width: 1100px)");
+      var stepping = false;
+      var stepSize = 0;
+      var stickTop = 0;
+      var stepIndex = 0;
+      var stepToScroll = function () {
+        if (!stepping) return;
+        var travelled = stickTop - track.getBoundingClientRect().top; // 0 at the moment the list stops moving
+        var index = Math.max(0, Math.min(rows.length - 1, Math.round(travelled / stepSize)));
+        if (index !== stepIndex) { stepIndex = index; activate(rows[index]); }
+      };
+      var setUpSteps = function () {
+        track.classList.remove("is-stepping");
+        track.style.height = "";
+        var listHeight = switcher.offsetHeight;
+        stepping = stepLayout.matches && window.innerHeight >= listHeight + 32;
+        if (!stepping) return;
+        stepSize = Math.round(window.innerHeight * 0.28);
+        stickTop = Math.max(16, Math.round((window.innerHeight - listHeight) / 2));
+        track.style.setProperty("--stick-top", stickTop + "px");
+        // Half a step extra at the end, so the last project stays on screen for a moment before the page ends.
+        track.style.height = listHeight + Math.round((rows.length - 0.5) * stepSize) + "px";
+        track.classList.add("is-stepping");
+        stepToScroll();
+      };
+      var stepsTimer = null;
+      window.addEventListener("scroll", stepToScroll, { passive: true });
+      window.addEventListener("resize", function () {
+        window.clearTimeout(stepsTimer);
+        stepsTimer = window.setTimeout(setUpSteps, 120);
+      });
+      if (stepLayout.addEventListener) stepLayout.addEventListener("change", setUpSteps);
+      setUpSteps();
+    }
   }
 
   /* Case study: contents list, reading progress and the current section */
