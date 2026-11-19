@@ -68,6 +68,18 @@ Once the Drive folder is connected, you do not need Claude for this.
 
 The folder link is not stored in this project. It is saved in Cloudflare as a secret called `PHOTOS_DRIVE_FOLDER`, next to a Google key called `GOOGLE_DRIVE_API_KEY`. To point the site at a different folder, change `PHOTOS_DRIVE_FOLDER` the same way as the password below.
 
+## Add an exploration
+
+The Exploration page is a board of tiles that visitors move around by scrolling or dragging. Pointing at a tile shows its name, a short description and a link to view it. On a phone, tapping a tile shows the same details with a View button.
+
+To add one, send Claude:
+
+- a picture or a short screen recording (landscape works best, because the tiles are wider than they are tall)
+- its name and one or two lines about it
+- a link, if it can be opened somewhere (a prototype or a live page)
+
+The board repeats your explorations to fill the screen, so it looks fuller with each one you add.
+
 ## See who visits and what they do
 
 Two free tools, each opened in its own dashboard. Neither shows anything on the site itself.

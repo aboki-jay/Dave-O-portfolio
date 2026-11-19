@@ -172,11 +172,12 @@ for (const type of STARTING_GESTURES) window.addEventListener(type, startOnGestu
 // Places where pointing with a mouse changes what is shown, and the sound each one makes:
 //   - a project name on the Selected work page (the picture beside it switches)
 //   - a project tile on the home page (the tile opens up)
-//   - a tile on the Exploration page (its arrow appears)
+//   - a tile on the Exploration page (its card appears)
 const HOVER_SOUNDS = [
   { target: "[data-work-switcher] .project-row__title-row", sound: "tab-switch", volume: 0.6 },
   { target: ".work-tile", sound: "focus", volume: 1 },
   { target: ".exploration-tile", sound: "focus", volume: 1 },
+  { target: ".exploration-canvas__tile", sound: "focus", volume: 1 },
 ];
 // Same condition the stylesheet uses for these hover effects: a mouse, on a wide screen.
 const hoverLayout = window.matchMedia("(hover: hover) and (min-width: 1100px)");

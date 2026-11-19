@@ -121,7 +121,9 @@
      A tap anywhere outside the image, the x button or the Escape key puts things back. */
   var imageRows = document.querySelectorAll("[data-image-row]");
   var caseStudyPage = document.querySelector(".case-study");
-  if (imageRows.length || caseStudyPage) {
+  var explorationList = document.querySelector("[data-exploration-list]");
+  var showFullView = null; // set just below; lets the Exploration board show a picture full size too
+  if (imageRows.length || caseStudyPage || explorationList) {
     var viewerPhone = window.matchMedia("(max-width: 767px)");
     var viewer = null;
     var cameFrom = null;
@@ -173,6 +175,7 @@
       viewer.classList.add("is-open");
       close.focus({ preventScroll: true });
     };
+    showFullView = openViewer;
     imageRows.forEach(function (row) {
       row.addEventListener("click", function (event) {
         if (!viewerPhone.matches) return;
@@ -499,6 +502,367 @@
       var target = document.getElementById(a.getAttribute("href").slice(1));
       if (target) observer.observe(target);
     });
+  }
+
+  /* Exploration page: an endless board of tiles (the layout of maybepratik.com/work).
+     The explorations are written in the page as an ordinary list (site-source/pages/exploration.html).
+     Here each one becomes a tile on a board that repeats in every direction. The board is moved by
+     dragging it, with the mouse wheel or trackpad, or with the arrow keys.
+       - Mouse: a small card follows the pointer with the name, the description and what a click does.
+         A click opens the exploration's link, or shows its picture full size if it has no link.
+       - Touch: a tap on a tile shows the same card at the bottom of the screen, with a View button.
+     Without this script the page simply shows the list as a grid. */
+  if (explorationList) {
+    var explorationFigures = Array.prototype.slice.call(explorationList.querySelectorAll(".exploration-tile"));
+    var explorations = explorationFigures.map(function (figure) {
+      var link = figure.querySelector("a.exploration-tile__link");
+      var nameHolder = figure.querySelector(".exploration-tile__link");
+      var aboutHolder = figure.querySelector(".exploration-tile__about");
+      var media = figure.querySelector(".exploration-tile__media");
+      var picture = media ? media.querySelector("img, video") : null;
+      return {
+        id: figure.id || "",
+        name: nameHolder ? nameHolder.textContent.trim() : "",
+        about: aboutHolder ? aboutHolder.textContent.trim() : "",
+        href: link ? link.getAttribute("href") : "",
+        picture: picture,
+        note: !picture && media ? media.textContent.trim() : "",
+      };
+    });
+
+    if (explorations.length) {
+      var TILE_GAP = 4; // the thin line between tiles
+      var ARROW_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>';
+      var calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      var boardHost = explorationList.closest("main") || document.body;
+      var board = document.createElement("div");
+      board.className = "exploration-canvas";
+      board.tabIndex = 0;
+      board.setAttribute("role", "group");
+      board.setAttribute("aria-label", "Board of explorations. Drag, scroll or use the arrow keys to move around it. The same explorations are listed after the board.");
+      var plane = document.createElement("div");
+      plane.className = "exploration-canvas__plane";
+      plane.setAttribute("aria-hidden", "true");
+      var hint = document.createElement("p");
+      hint.className = "exploration-canvas__hint";
+      hint.setAttribute("aria-hidden", "true");
+      hint.textContent = window.matchMedia("(hover: hover)").matches ? "Scroll or drag to explore" : "Drag to explore";
+      board.appendChild(plane);
+      board.appendChild(hint);
+      boardHost.insertBefore(board, explorationList);
+      explorationList.classList.add("visually-hidden");
+      document.documentElement.classList.add("has-exploration-canvas");
+
+      // The card with the name, description and link.
+      var card = document.createElement("div");
+      card.className = "exploration-card";
+      card.innerHTML = '<p class="exploration-card__name"></p><p class="exploration-card__about"></p><a class="exploration-card__view" target="_blank" rel="noopener"><span></span>' + ARROW_ICON + "</a>";
+      document.body.appendChild(card);
+      var cardName = card.querySelector(".exploration-card__name");
+      var cardAbout = card.querySelector(".exploration-card__about");
+      var cardView = card.querySelector(".exploration-card__view");
+      var cardFor = null;
+      var showCard = function (entry, pinned) {
+        if (cardFor !== entry || card.classList.contains("is-pinned") !== pinned) {
+          cardFor = entry;
+          cardName.textContent = entry.name;
+          cardAbout.textContent = entry.about;
+          cardAbout.hidden = !entry.about;
+          if (entry.href) {
+            cardView.hidden = false;
+            cardView.setAttribute("href", entry.href);
+            cardView.firstChild.textContent = pinned ? "View" : "Click to view";
+          } else if (entry.picture) {
+            cardView.hidden = false;
+            cardView.removeAttribute("href");
+            cardView.firstChild.textContent = pinned ? "View larger" : "Click to view larger";
+          } else {
+            cardView.hidden = true;
+          }
+          card.classList.toggle("is-pinned", pinned);
+          if (pinned) card.style.transform = "";
+        }
+        card.classList.add("is-shown");
+      };
+      var hideCard = function () {
+        card.classList.remove("is-shown");
+        cardFor = null;
+      };
+      var placeCard = function (x, y) {
+        var box = card.getBoundingClientRect();
+        var left = x + 16;
+        var top = y + 20;
+        if (left + box.width > window.innerWidth - 8) left = x - box.width - 12;
+        if (top + box.height > window.innerHeight - 8) top = y - box.height - 12;
+        card.style.transform = "translate(" + Math.max(8, Math.round(left)) + "px," + Math.max(8, Math.round(top)) + "px)";
+      };
+      var openEntry = function (entry, tilePicture) {
+        if (entry.href) {
+          if (entry.href.charAt(0) === "/" || entry.href.charAt(0) === "#") window.location.href = entry.href;
+          else window.open(entry.href, "_blank", "noopener");
+        } else if (tilePicture && showFullView) {
+          showFullView(tilePicture);
+        }
+      };
+      // The pinned card's button (touch): open the link, or the picture if there is no link.
+      cardView.addEventListener("click", function (event) {
+        if (!cardFor || cardFor.href) return;
+        event.preventDefault();
+        if (cardFor.picture && showFullView) showFullView(cardFor.picture);
+      });
+
+      /* The board itself. Tiles sit on a grid of columns and rows that goes on for ever; only the ones
+         on screen exist at any moment, and each shows one of the explorations in turn. */
+      var tileWidth = 0;
+      var tileHeight = 0;
+      var stepX = 0;
+      var stepY = 0;
+      var viewWidth = 0;
+      var viewHeight = 0;
+      var panX = 0; // which point of the board is at the top-left corner of the screen
+      var panY = 0;
+      var onBoard = {}; // the tiles that exist now, by "column,row"
+      var wrap = function (value, size) { return ((value % size) + size) % size; };
+      var rowShift = explorations.length > 2 ? Math.round(explorations.length / 2) : 1; // so a tile is not above a copy of itself
+      var entryAt = function (column, row) { return explorations[wrap(column + row * rowShift, explorations.length)]; };
+      var makeTile = function (column, row) {
+        var entry = entryAt(column, row);
+        var tile = document.createElement("div");
+        tile.className = "exploration-canvas__tile" + (entry.href ? " is-link" : entry.picture ? " is-zoom" : "");
+        tile.style.left = column * stepX + "px";
+        tile.style.top = row * stepY + "px";
+        tile.style.width = tileWidth + "px";
+        tile.style.height = tileHeight + "px";
+        if (entry.picture) {
+          var copy = entry.picture.cloneNode(true);
+          copy.removeAttribute("loading");
+          copy.draggable = false;
+          if (copy.tagName === "VIDEO") { copy.muted = true; copy.loop = true; copy.autoplay = !calm; copy.setAttribute("playsinline", ""); }
+          tile.appendChild(copy);
+        } else {
+          tile.textContent = entry.note || entry.name;
+        }
+        tile.explorationEntry = entry;
+        return tile;
+      };
+      var draw = function () {
+        var firstColumn = Math.floor(panX / stepX) - 1;
+        var lastColumn = Math.floor((panX + viewWidth) / stepX) + 1;
+        var firstRow = Math.floor(panY / stepY) - 1;
+        var lastRow = Math.floor((panY + viewHeight) / stepY) + 1;
+        var wanted = {};
+        for (var column = firstColumn; column <= lastColumn; column++) {
+          for (var row = firstRow; row <= lastRow; row++) {
+            var key = column + "," + row;
+            wanted[key] = true;
+            if (!onBoard[key]) {
+              onBoard[key] = makeTile(column, row);
+              plane.appendChild(onBoard[key]);
+            }
+          }
+        }
+        Object.keys(onBoard).forEach(function (key) {
+          if (!wanted[key]) { onBoard[key].remove(); delete onBoard[key]; }
+        });
+        plane.style.transform = "translate3d(" + -Math.round(panX) + "px," + -Math.round(panY) + "px,0)";
+      };
+      var centreOn = function (index) {
+        panX = index * stepX + tileWidth / 2 - viewWidth / 2;
+        panY = tileHeight / 2 - viewHeight / 2;
+      };
+      var measure = function (firstTime) {
+        var header = document.querySelector(".site-header");
+        document.documentElement.style.setProperty("--canvas-top", (header ? Math.round(header.getBoundingClientRect().bottom) : 0) + "px");
+        var box = board.getBoundingClientRect();
+        var atX = stepX ? (panX + viewWidth / 2) / stepX : 0; // where we are, counted in tiles
+        var atY = stepY ? (panY + viewHeight / 2) / stepY : 0;
+        viewWidth = box.width;
+        viewHeight = box.height;
+        tileWidth = Math.round(Math.min(504, Math.max(280, viewWidth * 0.35)));
+        tileHeight = Math.round(tileWidth * 0.75);
+        stepX = tileWidth + TILE_GAP;
+        stepY = tileHeight + TILE_GAP;
+        Object.keys(onBoard).forEach(function (key) { onBoard[key].remove(); delete onBoard[key]; });
+        if (firstTime) {
+          // Start on the exploration named in the address (from the home page list), or the first with a picture.
+          var asked = explorations.findIndex(function (entry) { return entry.id && "#" + entry.id === window.location.hash; });
+          var withPicture = explorations.findIndex(function (entry) { return entry.picture; });
+          centreOn(asked >= 0 ? asked : Math.max(0, withPicture));
+        } else {
+          panX = atX * stepX - viewWidth / 2;
+          panY = atY * stepY - viewHeight / 2;
+        }
+        draw();
+      };
+
+      var hintGone = false;
+      var dropHint = function () {
+        if (hintGone) return;
+        hintGone = true;
+        hint.classList.add("is-hidden");
+      };
+      var tileAt = function (x, y) {
+        var found = document.elementFromPoint(x, y);
+        return found && found.closest ? found.closest(".exploration-canvas__tile") : null;
+      };
+      var lastMouse = null;
+      var hoverAt = function (x, y) {
+        var tile = tileAt(x, y);
+        if (!tile || (cardFor && card.classList.contains("is-pinned"))) { if (!tile) hideCard(); return; }
+        showCard(tile.explorationEntry, false);
+        placeCard(x, y);
+      };
+
+      // Dragging, with a short glide after letting go.
+      var drag = null;
+      var speedX = 0;
+      var speedY = 0;
+      var gliding = 0;
+      var stopGlide = function () { if (gliding) { window.cancelAnimationFrame(gliding); gliding = 0; } };
+      var glide = function () {
+        var last = performance.now();
+        var frame = function (now) {
+          var passed = Math.min(40, now - last);
+          last = now;
+          panX += speedX * passed;
+          panY += speedY * passed;
+          var slow = Math.pow(0.94, passed / 16);
+          speedX *= slow;
+          speedY *= slow;
+          draw();
+          gliding = Math.abs(speedX) + Math.abs(speedY) > 0.02 ? window.requestAnimationFrame(frame) : 0;
+        };
+        gliding = window.requestAnimationFrame(frame);
+      };
+      board.addEventListener("pointerdown", function (event) {
+        if (event.pointerType === "mouse" && event.button !== 0) return;
+        stopGlide();
+        drag = { id: event.pointerId, kind: event.pointerType, fromX: event.clientX, fromY: event.clientY, panX: panX, panY: panY, moved: false, lastX: event.clientX, lastY: event.clientY, lastTime: performance.now() };
+        speedX = 0;
+        speedY = 0;
+        try { board.setPointerCapture(event.pointerId); } catch (error) { /* dragging still works without it */ }
+      });
+      board.addEventListener("pointermove", function (event) {
+        if (event.pointerType === "mouse") lastMouse = { x: event.clientX, y: event.clientY };
+        if (!drag || event.pointerId !== drag.id) {
+          if (event.pointerType === "mouse") hoverAt(event.clientX, event.clientY);
+          return;
+        }
+        var movedX = event.clientX - drag.fromX;
+        var movedY = event.clientY - drag.fromY;
+        if (!drag.moved && Math.abs(movedX) + Math.abs(movedY) > 6) {
+          drag.moved = true;
+          board.classList.add("is-dragging");
+          hideCard();
+          dropHint();
+        }
+        if (!drag.moved) return;
+        panX = drag.panX - movedX;
+        panY = drag.panY - movedY;
+        var now = performance.now();
+        var passed = Math.max(1, now - drag.lastTime);
+        speedX = 0.7 * ((drag.lastX - event.clientX) / passed) + 0.3 * speedX;
+        speedY = 0.7 * ((drag.lastY - event.clientY) / passed) + 0.3 * speedY;
+        drag.lastX = event.clientX;
+        drag.lastY = event.clientY;
+        drag.lastTime = now;
+        draw();
+      });
+      var endDrag = function (event) {
+        if (!drag || event.pointerId !== drag.id) return;
+        var finished = drag;
+        drag = null;
+        board.classList.remove("is-dragging");
+        if (finished.moved) {
+          if (!calm && event.type === "pointerup" && performance.now() - finished.lastTime < 80) glide();
+          return;
+        }
+        if (event.type !== "pointerup") return;
+        // A press without a drag: a click or a tap on whatever tile is there.
+        var tile = tileAt(event.clientX, event.clientY);
+        if (!tile) { hideCard(); return; }
+        var entry = tile.explorationEntry;
+        if (finished.kind === "mouse") {
+          openEntry(entry, tile.querySelector("img"));
+        } else if (cardFor === entry && card.classList.contains("is-pinned")) {
+          hideCard();
+        } else {
+          haptic();
+          showCard(entry, true);
+        }
+      };
+      board.addEventListener("pointerup", endDrag);
+      board.addEventListener("pointercancel", endDrag);
+      board.addEventListener("pointerleave", function (event) {
+        if (event.pointerType !== "mouse" || drag) return;
+        lastMouse = null;
+        if (!card.classList.contains("is-pinned")) hideCard();
+      });
+
+      // Scrolling: the mouse wheel or a trackpad moves the board up, down and sideways, wherever the
+      // pointer is on the page (over the header too). Pinch-to-zoom is left alone, and so is scrolling
+      // inside the phone menu or the full-size picture when one of them is open.
+      var somethingOnTop = function () {
+        var page = document.documentElement.classList;
+        return page.contains("has-open-menu") || page.contains("has-open-viewer");
+      };
+      window.addEventListener("wheel", function (event) {
+        if (event.ctrlKey || somethingOnTop()) return;
+        event.preventDefault();
+        stopGlide();
+        var unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? viewHeight : 1;
+        var byX = event.deltaX * unit;
+        var byY = event.deltaY * unit;
+        if (event.shiftKey && !byX) { byX = byY; byY = 0; }
+        panX += byX;
+        panY += byY;
+        dropHint();
+        draw();
+        if (lastMouse) hoverAt(lastMouse.x, lastMouse.y);
+      }, { passive: false });
+
+      // The keys that normally scroll a page move the board: the arrows, Page Up, Page Down and Space.
+      // Not while a link or button has the keyboard's attention, so Space still presses that button.
+      window.addEventListener("keydown", function (event) {
+        if (somethingOnTop() || event.ctrlKey || event.metaKey || event.altKey) return;
+        if (event.target !== document.body && event.target !== board) return;
+        var page = Math.round(viewHeight * 0.8);
+        var by = {
+          ArrowLeft: [-120, 0], ArrowRight: [120, 0], ArrowUp: [0, -120], ArrowDown: [0, 120],
+          PageUp: [0, -page], PageDown: [0, page], " ": [0, event.shiftKey ? -page : page],
+        }[event.key];
+        if (!by) return;
+        event.preventDefault();
+        stopGlide();
+        panX += by[0];
+        panY += by[1];
+        dropHint();
+        draw();
+      });
+
+      // The ordinary list is still there for keyboards and screen readers. When one of its links is
+      // reached with the Tab key, the board moves to that exploration and shows its card.
+      explorationList.addEventListener("focusin", function (event) {
+        var figure = event.target.closest ? event.target.closest(".exploration-tile") : null;
+        var index = explorationFigures.indexOf(figure);
+        if (index < 0) return;
+        stopGlide();
+        centreOn(index);
+        draw();
+        showCard(explorations[index], true);
+      });
+      explorationList.addEventListener("focusout", function () {
+        if (card.classList.contains("is-pinned")) hideCard();
+      });
+
+      var boardTimer = null;
+      window.addEventListener("resize", function () {
+        window.clearTimeout(boardTimer);
+        boardTimer = window.setTimeout(function () { hideCard(); measure(false); }, 120);
+      });
+      measure(true);
+    }
   }
 
   /* About page photos: the label follows the pointer while it is over a photo */

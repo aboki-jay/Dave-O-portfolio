@@ -1,6 +1,7 @@
 <!--page {
   "path": "/exploration/",
   "active": "exploration",
+  "contactHref": "/#contact",
   "title": "Exploration | David Okunlola",
   "description": "Design explorations and concepts by David Okunlola, including a gamified mobile app that teaches Formula 1 to beginners and a football-themed interactive wedding invite."
 } -->
@@ -8,13 +9,16 @@
   <main id="main" class="exploration">
     <h1 class="heading-2">Exploration</h1>
 
-    <!-- One tile per exploration: a tall picture (or video), then its name and a line or two about it.
+    <!-- One block per exploration: a picture (or video), then its name and a line or two about it.
+         On screen these become tiles on an endless board that visitors drag around ("Exploration page"
+         in site.js); pointing at a tile shows its name, description and link. This list is what the
+         board is made from, and what search engines, screen readers and browsers without scripts get.
          To add one, copy a <figure> block.
          - Picture: replace the "Add exploration visual" box with an <img> or a <video>.
          - Link: if the exploration can be opened somewhere (a prototype, a live page), put the name
            inside <a class="exploration-tile__link" href="...">. The whole tile then becomes clickable.
            The arrow beside the name appears on hover either way. -->
-    <div class="exploration-grid">
+    <div class="exploration-grid" data-exploration-list>
       <figure class="exploration-tile" id="exploration-f1">
         <div class="exploration-tile__media">Add exploration visual</div>
         <figcaption class="exploration-tile__caption">

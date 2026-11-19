@@ -754,6 +754,36 @@ button.case-gallery__next:hover { background: var(--color-fill1); }
 .exploration-tile__media:has(img, video) { padding: 0; }
 .exploration-tile__media img, .exploration-tile__media video { display: block; width: 100%; height: 100%; object-fit: cover; }
 .exploration-tile__caption { display: flex; flex-direction: column; gap: 4px; }
+
+/* The Exploration board (when scripts are on): the page is the header and, under it, a board of
+   tiles that fills the rest of the screen and is dragged around. Nothing else scrolls. */
+html.has-exploration-canvas, html.has-exploration-canvas body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+html.has-exploration-canvas .contact-section, html.has-exploration-canvas .site-footer { display: none; }
+html.has-exploration-canvas .exploration { position: fixed; left: 0; right: 0; top: var(--canvas-top, 96px); bottom: 0; display: block; padding: 0; }
+html.has-exploration-canvas .exploration > .heading-2 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.exploration-canvas { position: absolute; inset: 0; overflow: hidden; background: var(--color-border); cursor: grab; touch-action: none; -webkit-user-select: none; user-select: none; }
+.exploration-canvas:focus-visible { outline: 2px solid var(--color-fg); outline-offset: -2px; }
+.exploration-canvas.is-dragging, .exploration-canvas.is-dragging .exploration-canvas__tile { cursor: grabbing; }
+.exploration-canvas__plane { position: absolute; left: 0; top: 0; will-change: transform; }
+.exploration-canvas__tile { position: absolute; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 16px; border-radius: var(--radius-md); background: var(--color-bg); color: var(--color-fg-tertiary); font-size: 14px; line-height: 20px; text-align: center; }
+.exploration-canvas__tile:has(img, video) { padding: 0; }
+.exploration-canvas__tile img, .exploration-canvas__tile video { display: block; width: 100%; height: 100%; object-fit: contain; pointer-events: none; -webkit-user-drag: none; }
+.exploration-canvas__tile.is-link { cursor: pointer; }
+.exploration-canvas__tile.is-zoom { cursor: zoom-in; }
+.exploration-canvas__hint { position: absolute; left: 50%; bottom: max(24px, env(safe-area-inset-bottom)); z-index: 2; margin: 0; padding: 8px 14px; border-radius: var(--radius-full); background: var(--color-fg); color: var(--color-fg-inverse); font-size: 13px; line-height: 18px; font-weight: 500; white-space: nowrap; transform: translateX(-50%); pointer-events: none; transition: opacity 0.4s ease; }
+.exploration-canvas__hint.is-hidden { opacity: 0; }
+/* The card with an exploration's name, description and link. With a mouse it follows the pointer;
+   on a touch screen it sits at the bottom after a tap. */
+.exploration-card { position: fixed; left: 0; top: 0; z-index: 40; width: max-content; max-width: min(300px, calc(100vw - 32px)); padding: 12px 14px; border: 1px solid var(--color-border); border-radius: var(--radius-xl); background: var(--color-bg); box-shadow: 0 12px 28px -12px rgba(25, 24, 27, 0.22); pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 0.15s ease, visibility 0s linear 0.15s; }
+.exploration-card.is-shown { opacity: 1; visibility: visible; transition: opacity 0.15s ease, visibility 0s; }
+.exploration-card__name { font-size: 14px; line-height: 20px; font-weight: 600; }
+.exploration-card__about { margin-top: 2px; font-size: 13px; line-height: 18px; color: var(--color-fg-secondary); }
+.exploration-card__view { display: inline-flex; align-items: center; gap: 4px; margin-top: 8px; font-size: 13px; line-height: 18px; font-weight: 500; }
+.exploration-card.is-pinned { left: 16px; right: 16px; top: auto; bottom: max(16px, env(safe-area-inset-bottom)); width: auto; max-width: 420px; margin: 0 auto; padding: 16px; pointer-events: auto; }
+.exploration-card.is-pinned .exploration-card__view { justify-content: center; width: 100%; margin-top: 12px; padding: 10px 12px; border-radius: var(--radius-lg); background: var(--color-fg); color: var(--color-fg-inverse); font-size: 14px; line-height: 20px; cursor: pointer; }
+@media (prefers-reduced-motion: reduce) {
+  .exploration-card, .exploration-canvas__hint { transition: none; }
+}
 .exploration-tile__name { display: flex; align-items: center; gap: 4px; font-size: 16px; line-height: 24px; font-weight: 600; }
 .exploration-tile__about { font-size: 14px; line-height: 22px; color: var(--color-fg-secondary); }
 /* When the name is a link, the whole tile is clickable. */
