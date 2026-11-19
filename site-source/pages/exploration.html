@@ -9,47 +9,14 @@
   <main id="main" class="exploration">
     <h1 class="heading-2">Exploration</h1>
 
-    <!-- One block per exploration: a picture (or video), then its name and a line or two about it.
-         On screen these become tiles on an endless board that visitors drag around ("Exploration page"
-         in site.js); pointing at a tile shows its name, description and link. This list is what the
-         board is made from, and what search engines, screen readers and browsers without scripts get.
-         To add one, copy a <figure> block.
-         - Picture: replace the "Add exploration visual" box with an <img> or a <video>.
-         - Link: if the exploration can be opened somewhere (a prototype, a live page), put the name
-           inside <a class="exploration-tile__link" href="...">. The whole tile then becomes clickable.
-           The arrow beside the name appears on hover either way. -->
+    <!-- The explorations are added in Sanity (https://davidokunlola.sanity.studio, "Explorations").
+         The build step writes one block per exploration here: a picture or video, its name and a line
+         or two about it. On screen they become tiles on an endless board that visitors scroll or drag
+         around ("Exploration page" in site.js); pointing at a tile shows its name, description and
+         link. This list is what the board is made from, and what search engines, screen readers and
+         browsers without scripts get. -->
     <div class="exploration-grid" data-exploration-list>
-      <figure class="exploration-tile" id="exploration-f1">
-        <div class="exploration-tile__media">Add exploration visual</div>
-        <figcaption class="exploration-tile__caption">
-          <h2 class="exploration-tile__name"><span class="exploration-tile__link">Mobile app for F1 beginners</span>{{> arrow-up-right}}</h2>
-          <p class="exploration-tile__about">A gamified concept that teaches Formula 1 through short lessons, quizzes and challenges. Points and unlockable features keep newcomers moving forward.</p>
-        </figcaption>
-      </figure>
-
-      <figure class="exploration-tile" id="exploration-wedding-invite">
-        <div class="exploration-tile__media"><img src="/images/exploration-wedding-invite-450w.webp" width="450" height="800" alt="The opening screen of a wedding invite website set on a football pitch" loading="lazy" decoding="async"></div>
-        <figcaption class="exploration-tile__caption">
-          <h2 class="exploration-tile__name"><a class="exploration-tile__link" href="https://inn-air-star-2026.vercel.app/" target="_blank" rel="noopener">Football-themed wedding invite</a>{{> arrow-up-right}}</h2>
-          <p class="exploration-tile__about">An interactive wedding website invite with a football theme, made with Figma, GSAP and Antigravity.</p>
-        </figcaption>
-      </figure>
-
-      <figure class="exploration-tile">
-        <div class="exploration-tile__media">Add exploration visual</div>
-        <figcaption class="exploration-tile__caption">
-          <h2 class="exploration-tile__name"><span class="exploration-tile__link">[Exploration title]</span>{{> arrow-up-right}}</h2>
-          <p class="exploration-tile__about">[One or two lines on what you were testing and what you learned]</p>
-        </figcaption>
-      </figure>
-
-      <figure class="exploration-tile">
-        <div class="exploration-tile__media">Add exploration visual</div>
-        <figcaption class="exploration-tile__caption">
-          <h2 class="exploration-tile__name"><span class="exploration-tile__link">[Exploration title]</span>{{> arrow-up-right}}</h2>
-          <p class="exploration-tile__about">[One or two lines on what you were testing and what you learned]</p>
-        </figcaption>
-      </figure>
+{{> exploration-tiles}}
     </div>
   </main>
   {{> contact-box}}

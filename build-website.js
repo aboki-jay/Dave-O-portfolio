@@ -191,6 +191,8 @@ const GENERATED_PARTS = {
   "home-work-tiles": homeWorkTiles,
   "work-product-list": workProductList,
   "work-brand-list": workBrandList,
+  "exploration-tiles": explorationTiles,
+  "exploration-shortlist": explorationShortlist,
 };
 
 /* ---------- Case studies ----------
@@ -388,14 +390,17 @@ function caseStudyPage(study) {
 
 const SANITY = { projectId: String(SITE.sanityProjectId || "").trim(), dataset: String(SITE.sanityDataset || "production").trim() };
 
-async function readSanityCaseStudies() {
+// Ask Sanity a question (in its query language) and get the published answers back.
+async function askSanity(question) {
   if (!SANITY.projectId) return [];
-  const question = '*[_type == "caseStudy" && defined(slug.current)] | order(order asc, name asc)';
   const address = `https://${SANITY.projectId}.api.sanity.io/v2025-02-19/data/query/${SANITY.dataset}?perspective=published&query=${encodeURIComponent(question)}`;
   const reply = await fetch(address, { signal: AbortSignal.timeout(20000) });
   if (!reply.ok) throw new Error(`Sanity answered ${reply.status}`);
   return (await reply.json()).result || [];
 }
+
+const readSanityCaseStudies = () => askSanity('*[_type == "caseStudy" && defined(slug.current)] | order(order asc, name asc)');
+const readSanityExplorations = () => askSanity('*[_type == "exploration" && defined(name)] | order(order asc, _createdAt asc)');
 
 /* A picture uploaded in Sanity, as addresses on Sanity's picture service at the sizes the page needs.
    "shape" (width divided by height) crops it to a fixed shape; without it the picture keeps its own. */
@@ -492,6 +497,62 @@ function fromSanity(doc, local) {
   return { project, study };
 }
 
+/* ---------- Explorations from Sanity ----------
+   David adds explorations in Sanity too (sanity-studio/schemaTypes/exploration.js). Each one becomes
+   a block in the list on the Exploration page, which the board is made from ("Exploration page" in
+   site.js), and, if ticked, a row in the Explorations list on the home page. */
+
+let EXPLORATIONS = [];
+
+function explorationFromSanity(doc, taken) {
+  const name = String(doc.name || "").trim();
+  let id = "exploration-" + (name.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "untitled");
+  while (taken.has(id)) id += "-2"; // two explorations with the same name still get their own address
+  taken.add(id);
+  const link = String(doc.link || "").trim();
+  return {
+    id,
+    name,
+    about: String(doc.about || "").trim(),
+    link: /^https?:\/\//i.test(link) ? link : "",
+    picture: sanityPicture(doc.picture, { widths: [504, 1008, 1600] }), // 504 is the widest a tile gets
+    video: sanityVideo(doc.video),
+    home: doc.showOnHome !== false,
+    homeNote: String(doc.homeNote || "").trim(),
+  };
+}
+
+function explorationTiles() {
+  if (!EXPLORATIONS.length) return '      <p>[No explorations to show yet. Add one in Sanity.]</p>';
+  const tile = (e) => {
+    const alt = e.picture ? escapeHtml(e.picture.alt) : "";
+    let media = "Add exploration visual";
+    if (e.video) {
+      media = `<video src="${e.video.video}"${e.picture ? ` poster="${e.picture.image}"` : ""} muted loop playsinline preload="metadata"${alt ? ` aria-label="${alt}"` : ""}></video>`;
+    } else if (e.picture) {
+      media = `<img src="${e.picture.image}" srcset="${e.picture.srcset}" sizes="(max-width: 800px) 280px, (max-width: 1440px) 35vw, 504px" width="${e.picture.width}" height="${e.picture.height}" alt="${alt}" loading="lazy" decoding="async">`;
+    }
+    const name = e.link
+      ? `<a class="exploration-tile__link" href="${escapeHtml(e.link)}" target="_blank" rel="noopener">${escapeHtml(e.name)}</a>`
+      : `<span class="exploration-tile__link">${escapeHtml(e.name)}</span>`;
+    return `      <figure class="exploration-tile" id="${e.id}">
+        <div class="exploration-tile__media">${media}</div>
+        <figcaption class="exploration-tile__caption">
+          <h2 class="exploration-tile__name">${name}${part("arrow-up-right").trim()}</h2>
+          ${e.about ? `<p class="exploration-tile__about">${escapeHtml(e.about)}</p>` : ""}
+        </figcaption>
+      </figure>`;
+  };
+  return EXPLORATIONS.map(tile).join("\n\n");
+}
+
+// The rows of the Explorations list on the home page. Each one opens the board centred on its tile.
+function explorationShortlist() {
+  return EXPLORATIONS.filter((e) => e.home)
+    .map((e) => `        <li><a class="shortlist__row" href="/exploration/#${e.id}"><span class="shortlist__name">${escapeHtml(e.name)}</span><span class="shortlist__about">${escapeHtml(e.homeNote)}</span></a></li>`)
+    .join("\n");
+}
+
 /* ---------- Putting a page together ---------- */
 
 function fill(template, values) {
@@ -581,8 +642,11 @@ for (const fileName of fs.readdirSync(path.join(SOURCE, "content", "case-studies
 }
 
 // Case studies written in Sanity. Each one replaces a file with the same name, or is added as new.
+// The explorations are read in the same go.
 let fromSanityCount = 0;
 try {
+  const taken = new Set();
+  EXPLORATIONS = (await readSanityExplorations()).map((doc) => explorationFromSanity(doc, taken));
   for (const doc of await readSanityCaseStudies()) {
     const { project: fresh, study } = fromSanity(doc, PROJECTS.find((p) => p.id === doc.slug.current));
     PROJECTS = [...PROJECTS.filter((p) => p.id !== fresh.id), fresh];
@@ -592,8 +656,8 @@ try {
 } catch (error) {
   // When Cloudflare is publishing, stop here so the site that is already live stays as it is.
   // On your own computer, carry on with the files in this folder so the preview still works offline.
-  if (process.env.CI || process.env.WORKERS_CI) throw new Error(`Could not read case studies from Sanity, so nothing was published: ${error.message}`);
-  console.warn(`Could not reach Sanity (${error.message}). Using the case study files in this folder instead.`);
+  if (process.env.CI || process.env.WORKERS_CI) throw new Error(`Could not read case studies and explorations from Sanity, so nothing was published: ${error.message}`);
+  console.warn(`Could not reach Sanity (${error.message}). Using the case study files in this folder instead; the Exploration page will be empty.`);
 }
 
 fs.rmSync(OUTPUT, { recursive: true, force: true });
@@ -627,7 +691,7 @@ if (noindexFor.length) fs.writeFileSync(path.join(OUTPUT, "_headers"), noindexFo
 
 console.log(`Built ${built.length} pages into site-output. Search engines may list ${listed.length}:`);
 for (const m of built.sort((a, b) => a.path.localeCompare(b.path))) console.log(`  ${m.listed ? "listed " : "hidden "} ${m.path}`);
-if (SANITY.projectId) console.log(`Case studies from Sanity: ${fromSanityCount}`);
+if (SANITY.projectId) console.log(`From Sanity: ${fromSanityCount} case studies, ${EXPLORATIONS.length} explorations`);
 }
 
 main().catch((error) => {

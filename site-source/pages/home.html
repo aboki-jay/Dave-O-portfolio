@@ -24,12 +24,12 @@
     <p class="view-all-work"><a class="button button--secondary button--small" href="/work/"><span>View all work</span></a></p>
 
     <!-- Exploration shortlist: one row per exploration. Name on the left, a few words about it on the right.
-         To add one, copy a row and change the link, the name and the description. -->
+         The rows come from Sanity: every exploration with "Show in the Explorations list on the home
+         page" ticked. The last row, to the whole board, is always there. -->
     <section class="shortlist-section" aria-labelledby="explorations-heading">
       <h2 class="shortlist__label" id="explorations-heading">Explorations</h2>
       <ul class="shortlist">
-        <li><a class="shortlist__row" href="/exploration/#exploration-f1"><span class="shortlist__name">Mobile app for F1 beginners</span><span class="shortlist__about">gamified concept, mobile app</span></a></li>
-        <li><a class="shortlist__row" href="/exploration/#exploration-wedding-invite"><span class="shortlist__name">Football-themed wedding invite</span><span class="shortlist__about">interactive website, GSAP</span></a></li>
+{{> exploration-shortlist}}
         <li><a class="shortlist__row" href="/exploration/"><span class="shortlist__name">All explorations</span><span class="shortlist__about">ongoing</span></a></li>
       </ul>
     </section>

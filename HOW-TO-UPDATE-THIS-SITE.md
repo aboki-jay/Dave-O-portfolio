@@ -70,13 +70,21 @@ The folder link is not stored in this project. It is saved in Cloudflare as a se
 
 ## Add an exploration
 
+Explorations live in Sanity too. You do not need Claude to add, change or remove one.
+
 The Exploration page is a board of tiles that visitors move around by scrolling or dragging. Pointing at a tile shows its name, a short description and a link to view it. On a phone, tapping a tile shows the same details with a View button.
 
-To add one, send Claude:
+1. Go to https://davidokunlola.sanity.studio and sign in.
+2. Click **Explorations**. To add one, click the pencil icon at the top of the list. To change one, click it.
+3. Fill in the form and click **Publish**. The live site updates by itself in a minute or two.
 
-- a picture or a short screen recording (landscape works best, because the tiles are wider than they are tall)
-- its name and one or two lines about it
-- a link, if it can be opened somewhere (a prototype or a live page)
+- **Picture or GIF:** landscape fills the tile best, because the tiles are wider than they are tall.
+- **Video:** optional, and plays instead of the picture. Keep it very small (5 to 15 seconds, under 5 MB), because the same video shows several times on the board.
+- **Link:** optional. With a link, clicking the tile opens it. Without one, clicking shows the picture larger.
+- **Order:** lower numbers come first.
+- **Home page:** tick the box to list it under Explorations on the home page, and write the few words shown beside its name.
+- **Remove one:** open it, click the arrow beside Publish, and choose **Unpublish**.
+- **Careful:** Sanity's free plan lets anyone read what is stored there, so do not add work that is under NDA.
 
 The board repeats your explorations to fill the screen, so it looks fuller with each one you add.
 
