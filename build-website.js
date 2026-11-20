@@ -596,7 +596,9 @@ function buildPage({ meta, content }) {
     description: escapeHtml(meta.description),
     canonical,
     robots: listedInSearch(meta) ? "" : '<meta name="robots" content="noindex">',
-    previewPicture: meta.previewPicture || `${SITE.address}/images/link-preview.png`,
+    // The picture shown when a link is shared (Facebook, WhatsApp, LinkedIn, X). From Figma node 386:18129,
+    // 1200 x 630. Those services remember a picture by its address, so give a new version a new file name.
+    previewPicture: meta.previewPicture || `${SITE.address}/images/link-preview-v2.png`,
     previewAlt: escapeHtml(meta.previewAlt || `${SITE.ownerName}: I design fintech and SaaS products from 0 to 1, and the brands around them.`),
     // A short description of the page in the form Google reads directly ("structured data").
     structuredData: meta.article
