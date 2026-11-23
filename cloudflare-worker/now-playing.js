@@ -27,6 +27,7 @@ import { PLAYLISTS_TO_SHOW } from "./playlists-to-show.js";
 
 const SECONDS_BEFORE_ASKING_ABOUT_THE_SONG_AGAIN = 30; // however many people open the page, Spotify is asked at most this often
 const SECONDS_BEFORE_ASKING_ABOUT_PLAYLISTS_AGAIN = 600; // a new or renamed playlist shows up within ten minutes
+const BROWSER_KEEPS_FOR_SECONDS = 30; // how long a visitor's own browser may reuse an answer before asking the site again
 const SONG_COVER_WIDTH = 64; // shown small, at the centre of the record
 const PLAYLIST_COVER_WIDTH = 120; // shown at 40px; this stays sharp on phone screens
 const MOST_PLAYLISTS = 30; // each one is a separate question to Spotify, so keep the list reasonable
@@ -44,13 +45,19 @@ export function handlePlaylists(request, env, ctx) {
 
 // The shared routine: hand back the answer kept from a moment ago, or ask Spotify and keep the new one.
 async function answerFromSpotify(request, env, ctx, address, seconds, ask) {
-  if (request.method !== "GET") return json({ state: "off" }, seconds, 405);
-  if (!env.SPOTIFY_CLIENT_ID || !env.SPOTIFY_CLIENT_SECRET || !env.SPOTIFY_REFRESH_TOKEN) return json({ state: "off" }, seconds);
+  if (request.method !== "GET") return json({ state: "off" }, BROWSER_KEEPS_FOR_SECONDS, 405);
+  if (!env.SPOTIFY_CLIENT_ID || !env.SPOTIFY_CLIENT_SECRET || !env.SPOTIFY_REFRESH_TOKEN) return json({ state: "off" }, BROWSER_KEEPS_FOR_SECONDS);
 
   const shelf = caches.default;
   const label = new Request(new URL(address, request.url).toString());
   const kept = await shelf.match(label);
-  if (kept) return kept;
+  if (kept) {
+    // Cloudflare relabels a saved answer as "keep for 4 hours" on its way out, which would leave a
+    // visitor's browser showing an old song. Put our own, short label back on it.
+    const fresh = new Response(kept.body, kept);
+    fresh.headers.set("Cache-Control", `public, max-age=${BROWSER_KEEPS_FOR_SECONDS}`);
+    return fresh;
+  }
 
   let answer;
   try {
@@ -62,9 +69,9 @@ async function answerFromSpotify(request, env, ctx, address, seconds, ask) {
   // When something went wrong (nothing came back, or a playlist was left out), try again soon rather
   // than keeping a poor answer for ten minutes.
   const { incomplete, ...shown } = answer;
-  const response = json(shown, answer.state === "off" || incomplete ? Math.min(seconds, 60) : seconds);
-  ctx.waitUntil(shelf.put(label, response.clone()));
-  return response;
+  const keepFor = answer.state === "off" || incomplete ? Math.min(seconds, 60) : seconds;
+  ctx.waitUntil(shelf.put(label, json(shown, keepFor))); // how long Cloudflare keeps it
+  return json(shown, Math.min(keepFor, BROWSER_KEEPS_FOR_SECONDS)); // how long the visitor's browser may
 }
 
 async function accessPass(env) {
