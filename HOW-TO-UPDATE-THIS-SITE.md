@@ -88,6 +88,24 @@ The Exploration page is a board of tiles that visitors move around by scrolling 
 
 The board repeats your explorations to fill the screen, so it looks fuller with each one you add.
 
+## Music on the About page
+
+Under the Playlists heading there are two things, and both come straight from your Spotify. There is nothing to maintain here.
+
+- **Now playing:** the small row with the spinning record shows the song you are playing right now. When nothing is playing it shows the last song you played. Podcasts are not shown.
+- **Your playlists:** the list shows the playlists you chose, in the order you chose. Four are in view and visitors scroll for the rest. Each one's name, cover and number of songs come from Spotify, so renaming a playlist or adding songs updates the site by itself within about ten minutes.
+
+To add, remove or reorder playlists, tell Claude which ones (the name is enough, or paste the link from Spotify: three dots, **Share**, **Copy link to playlist**).
+
+Good to know:
+
+- A playlist must be public on Spotify to show. One that is set to private is skipped.
+- It only works while your Spotify account has Premium. If Premium lapses, both parts disappear until it is renewed. Nothing else on the site is affected.
+- If they disappear for another reason (for example after you change your Spotify password), ask Claude to "reconnect Spotify". You will be asked to click Agree on a Spotify page again, then to update one secret in Cloudflare.
+- To switch it all off, remove the secret SPOTIFY_REFRESH_TOKEN in Cloudflare, or ask Claude.
+
+Three secrets make it work, saved in Cloudflare next to the photo ones: SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET and SPOTIFY_REFRESH_TOKEN. The first two come from the app you made at developer.spotify.com.
+
 ## See who visits and what they do
 
 Two free tools, each opened in its own dashboard. Neither shows anything on the site itself.
@@ -107,6 +125,8 @@ How they are set up on this site:
   - **Case study opened from:** home page, Work page, phone menu, another case study
   - **Case study:** read to the end
   - **Exploration:** opened link, viewed picture
+  - **Now playing:** opened in Spotify
+  - **Playlist:** opened in Spotify
 - To see where visitors come from, add a tag to the link you share, for example `https://davidokunlola.com/?utm_source=linkedin` or `?utm_source=whatsapp`. It then shows under **Source** in Clarity.
 - To switch either tool off, ask Claude. The two IDs are in `site-source/content/site-details.json`.
 

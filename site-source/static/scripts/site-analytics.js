@@ -58,7 +58,9 @@
          Resume: downloaded PDF
          Case study opened from: home page / Work page / phone menu / another case study / another page
          Case study: read to the end
-         Exploration: opened link / viewed picture */
+         Exploration: opened link / viewed picture
+         Now playing: opened in Spotify
+         Playlist: opened in Spotify */
     var note = function (name) {
       window.clarity("event", name);
     };

@@ -872,6 +872,109 @@
     }
   }
 
+  /* About page: the "Now playing" row. The page asks the site what David is playing on Spotify
+     (/api/now-playing, see cloudflare-worker/now-playing.js) and fills the row in. It asks again
+     every minute while the page is open and in view. With nothing to show, the row stays hidden. */
+  var nowPlaying = document.querySelector("[data-now-playing]");
+  if (nowPlaying && window.fetch) {
+    var songPart = function (name) { return nowPlaying.querySelector("[data-song-" + name + "]"); };
+    var howLongAgo = function (when) {
+      var minutes = Math.round((Date.now() - new Date(when).getTime()) / 60000);
+      if (!(minutes >= 0)) return "";
+      if (minutes < 2) return "just now";
+      if (minutes < 60) return minutes + " min ago";
+      var hours = Math.round(minutes / 60);
+      if (hours < 24) return hours + (hours === 1 ? " hour ago" : " hours ago");
+      var days = Math.round(hours / 24);
+      return days === 1 ? "yesterday" : days + " days ago";
+    };
+    var showSong = function (song) {
+      if (!song || !song.name || (song.state !== "playing" && song.state !== "last")) { nowPlaying.hidden = true; return; }
+      var playing = song.state === "playing";
+      var ago = !playing && song.playedAt ? howLongAgo(song.playedAt) : "";
+      var state = playing ? "Now playing" : "Last played" + (ago ? " " + ago : "");
+      nowPlaying.classList.toggle("is-playing", playing);
+      nowPlaying.setAttribute("href", /^https:\/\/open\.spotify\.com\//.test(song.url || "") ? song.url : "https://open.spotify.com/");
+      nowPlaying.setAttribute("aria-label", state + ": " + song.name + (song.artists ? " by " + song.artists : "") + ", opens Spotify");
+      songPart("status").textContent = state;
+      songPart("name").textContent = song.name;
+      songPart("artists").textContent = song.artists || "";
+      nowPlaying.querySelector(".now-playing__by").hidden = !song.artists;
+      var cover = songPart("cover");
+      cover.hidden = !song.cover;
+      if (song.cover && cover.getAttribute("src") !== song.cover) cover.src = song.cover;
+      nowPlaying.hidden = false;
+    };
+    var askWhatIsPlaying = function () {
+      fetch("/api/now-playing")
+        .then(function (reply) { return reply.ok ? reply.json() : null; })
+        .then(showSong)
+        .catch(function () { /* leave the row as it is */ });
+    };
+    askWhatIsPlaying();
+    window.setInterval(function () { if (!document.hidden) askWhatIsPlaying(); }, 60000);
+  }
+
+  /* About page: the playlist list. The site hands over David's public Spotify playlists
+     (/api/playlists, see cloudflare-worker/now-playing.js) and each becomes a row that opens the
+     playlist on Spotify. Four rows are in view; a fade at the bottom shows while there is more to
+     scroll to. With nothing to show, the list stays hidden. */
+  var playlistBox = document.querySelector("[data-playlists]");
+  if (playlistBox && window.fetch) {
+    var playlistList = playlistBox.querySelector("[data-playlist-list]");
+    var playlistCount = document.querySelector("[data-playlist-count]");
+    var playlistsEmpty = document.querySelector("[data-playlists-empty]");
+    var ROW_ARROW = '<svg class="arrow-up-right" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>';
+    var markMore = function () {
+      playlistBox.classList.toggle("has-more", playlistList.scrollHeight - playlistList.scrollTop - playlistList.clientHeight > 4);
+    };
+    var showPlaylists = function (answer) {
+      if (!answer || answer.state !== "ok" || !Array.isArray(answer.playlists)) return; // not connected: leave everything hidden
+      var playlists = answer.playlists.filter(function (p) { return p && p.name && /^https:\/\/open\.spotify\.com\//.test(p.url || ""); });
+      playlistList.textContent = "";
+      playlists.forEach(function (p) {
+        var item = document.createElement("li");
+        var row = document.createElement("a");
+        row.className = "playlist-row";
+        row.href = p.url;
+        row.target = "_blank";
+        row.rel = "noopener";
+        row.setAttribute("data-track", "Playlist: opened in Spotify");
+        var cover = document.createElement(p.cover ? "img" : "span");
+        cover.className = "playlist-row__cover";
+        if (p.cover) { cover.src = p.cover; cover.alt = ""; cover.width = 40; cover.height = 40; cover.loading = "lazy"; }
+        var lines = document.createElement("span");
+        lines.className = "playlist-row__lines";
+        var name = document.createElement("span");
+        name.className = "playlist-row__name";
+        name.textContent = p.name;
+        var about = document.createElement("span");
+        about.className = "playlist-row__about";
+        about.textContent = "Playlist" + (typeof p.songs === "number" ? " \u00b7 " + p.songs + (p.songs === 1 ? " song" : " songs") : "");
+        lines.appendChild(name);
+        lines.appendChild(about);
+        row.appendChild(cover);
+        row.appendChild(lines);
+        row.insertAdjacentHTML("beforeend", ROW_ARROW);
+        item.appendChild(row);
+        playlistList.appendChild(item);
+      });
+      playlistBox.hidden = !playlists.length;
+      if (playlistsEmpty) playlistsEmpty.hidden = playlists.length > 0;
+      if (playlistCount) {
+        playlistCount.hidden = !playlists.length;
+        playlistCount.textContent = (playlists.length < 10 ? "0" : "") + playlists.length;
+      }
+      markMore();
+    };
+    playlistList.addEventListener("scroll", markMore, { passive: true });
+    window.addEventListener("resize", markMore);
+    fetch("/api/playlists")
+      .then(function (reply) { return reply.ok ? reply.json() : null; })
+      .then(showPlaylists)
+      .catch(function () { /* leave the list hidden */ });
+  }
+
   /* About page photos: the label follows the pointer while it is over a photo */
   document.querySelectorAll(".about-photo").forEach(function (photo) {
     photo.addEventListener("pointermove", function (event) {

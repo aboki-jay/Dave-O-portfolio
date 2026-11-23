@@ -193,6 +193,7 @@ const GENERATED_PARTS = {
   "work-brand-list": workBrandList,
   "exploration-tiles": explorationTiles,
   "exploration-shortlist": explorationShortlist,
+  "about-playlists": aboutPlaylists,
 };
 
 /* ---------- Case studies ----------
@@ -551,6 +552,30 @@ function explorationShortlist() {
   return EXPLORATIONS.filter((e) => e.home)
     .map((e) => `        <li><a class="shortlist__row" href="/exploration/#${e.id}"><span class="shortlist__name">${escapeHtml(e.name)}</span><span class="shortlist__about">${escapeHtml(e.homeNote)}</span></a></li>`)
     .join("\n");
+}
+
+/* ---------- Music on the About page ----------
+   Two small things under the "Playlists" heading, both filled in by site.js from Spotify
+   (cloudflare-worker/now-playing.js) and both hidden when Spotify is not connected:
+     - a "Now playing" row: a record that spins, and the song David is playing right now (or the last
+       one he played). It follows shatermt.com, which David asked for.
+     - the list of playlists he chose to show: a small cover, the name and the number of songs. Four
+       are in view and the rest are reached by scrolling inside the list. David asked for this layout
+       after trying larger cards. Which playlists, and their order, is cloudflare-worker/playlists-to-show.js;
+       the name, cover and number of songs come from Spotify. */
+
+function aboutPlaylists() {
+  return `        <a class="now-playing" href="https://open.spotify.com/" target="_blank" rel="noopener" title="Open on Spotify" data-track="Now playing: opened in Spotify" data-now-playing hidden>
+          <span class="now-playing__record"><img width="22" height="22" alt="" data-song-cover><span class="now-playing__hole"></span></span>
+          <span class="now-playing__lines">
+            <span class="now-playing__state" data-song-status>Now playing</span>
+            <span class="now-playing__song"><strong data-song-name></strong><span class="now-playing__by"> by </span><strong data-song-artists></strong></span>
+          </span>
+        </a>
+        <div class="playlist-rows" data-playlists hidden>
+          <ul class="playlist-rows__list" tabindex="0" aria-labelledby="playlists-heading" data-playlist-list></ul>
+        </div>
+        <p class="playlist-rows__empty" data-playlists-empty hidden>[Add playlists to show]</p>`;
 }
 
 /* ---------- Putting a page together ---------- */

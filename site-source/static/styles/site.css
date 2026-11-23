@@ -684,6 +684,46 @@ button.case-gallery__next:hover { background: var(--color-fill1); }
 .book__title { font-size: 24px; line-height: 32px; font-weight: 600; color: var(--color-orange-text); }
 .about-placeholder { height: 240px; border-radius: var(--radius-2xl); }
 
+/* Now playing: a small record with the song's cover at its centre, a label, and one line saying
+   which song by whom. The record turns while a song is playing. Filled in by site.js. */
+.now-playing { display: inline-flex; align-items: center; gap: 12px; max-width: 100%; margin-bottom: 20px; border-radius: var(--radius-lg); }
+.now-playing[hidden] { display: none; }
+.now-playing__record { position: relative; flex: none; width: 48px; height: 48px; border-radius: var(--radius-full); background: repeating-radial-gradient(circle, var(--color-static-black) 0 2px, #1d1f22 2px 3px); }
+.now-playing__record img { position: absolute; left: 50%; top: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: var(--radius-full); object-fit: cover; background: var(--color-fg-secondary); }
+.now-playing__hole { position: absolute; left: 50%; top: 50%; width: 4px; height: 4px; margin: -2px 0 0 -2px; border-radius: var(--radius-full); background: var(--color-bg); }
+.now-playing.is-playing .now-playing__record { animation: now-playing-spin 4s linear infinite; }
+@keyframes now-playing-spin { to { transform: rotate(360deg); } }
+.now-playing__lines { min-width: 0; display: flex; flex-direction: column; gap: 2px; font-size: 14px; line-height: 20px; }
+.now-playing__state { font-size: 12px; line-height: 16px; color: var(--color-fg-tertiary); }
+.now-playing__song { color: var(--color-fg-tertiary); overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
+.now-playing__song strong { font-weight: 500; color: var(--color-fg); }
+a.now-playing:hover .now-playing__song strong:first-child { text-decoration: underline; text-underline-offset: 3px; }
+a.now-playing:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 4px; }
+
+/* Playlists: a plain list. Each row is a small cover, the name and the number of songs. Four rows
+   are in view; the rest are reached by scrolling inside the list, and a soft fade at the bottom
+   shows there is more. */
+.playlist-rows { position: relative; max-width: 480px; }
+.playlist-rows[hidden] { display: none; }
+.playlist-rows__list { display: flex; flex-direction: column; gap: 4px; max-height: 236px; /* four rows of 56px and the gaps between them */ margin: 0 -8px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--color-border) transparent; border-radius: var(--radius-xl); }
+.playlist-rows__list:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+.playlist-rows::after { content: ""; position: absolute; left: -8px; right: 4px; bottom: 0; height: 40px; background: linear-gradient(to bottom, rgba(255, 255, 255, 0), var(--color-bg)); pointer-events: none; opacity: 0; transition: opacity 0.2s ease; }
+.playlist-rows.has-more::after { opacity: 1; }
+.playlist-row { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 8px; border-radius: var(--radius-xl); transition: background-color 0.15s ease; }
+.playlist-row:hover { background: var(--color-fill1); }
+.playlist-row:focus-visible { outline: 2px solid var(--color-fg); outline-offset: -2px; }
+.playlist-row__cover { flex: none; width: 40px; height: 40px; border-radius: var(--radius-md); object-fit: cover; background: var(--color-fill2); }
+.playlist-row__lines { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.playlist-row__name { font-size: 14px; line-height: 20px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.playlist-row__about { font-size: 12px; line-height: 16px; color: var(--color-fg-tertiary); }
+.playlist-row .arrow-up-right { flex: none; color: var(--color-fg-tertiary); opacity: 0; transition: opacity 0.15s ease; }
+.playlist-row:hover .arrow-up-right, .playlist-row:focus-visible .arrow-up-right { opacity: 1; }
+.playlist-rows__empty { font-size: 14px; line-height: 20px; color: var(--color-fg-secondary); }
+@media (prefers-reduced-motion: reduce) {
+  .now-playing.is-playing .now-playing__record { animation: none; }
+  .playlist-row, .playlist-rows::after { transition: none; }
+}
+
 /* Note wall: the "Say something" button followed by the notes people have left.
    Each note takes one of the utility colours of the design system (listed at the end of this block). */
 .note-wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
