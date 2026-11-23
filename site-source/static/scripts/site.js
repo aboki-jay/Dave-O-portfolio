@@ -597,19 +597,26 @@
         if (top + box.height > window.innerHeight - 8) top = y - box.height - 12;
         card.style.transform = "translate(" + Math.max(8, Math.round(left)) + "px," + Math.max(8, Math.round(top)) + "px)";
       };
+      // Tells the visitor statistics (site-analytics.js) what was just done. Nothing happens if they are off.
+      var announce = function (what) {
+        try { document.dispatchEvent(new CustomEvent("site:did", { detail: what })); } catch (error) { /* very old browsers */ }
+      };
       var openEntry = function (entry, tilePicture) {
         if (entry.href) {
+          announce("Exploration: opened link");
           if (entry.href.charAt(0) === "/" || entry.href.charAt(0) === "#") window.location.href = entry.href;
           else window.open(entry.href, "_blank", "noopener");
         } else if (tilePicture && showFullView) {
+          announce("Exploration: viewed picture");
           showFullView(tilePicture);
         }
       };
       // The pinned card's button (touch): open the link, or the picture if there is no link.
       cardView.addEventListener("click", function (event) {
-        if (!cardFor || cardFor.href) return;
+        if (!cardFor) return;
+        if (cardFor.href) { announce("Exploration: opened link"); return; }
         event.preventDefault();
-        if (cardFor.picture && showFullView) showFullView(cardFor.picture);
+        if (cardFor.picture && showFullView) { announce("Exploration: viewed picture"); showFullView(cardFor.picture); }
       });
 
       /* The board itself. Tiles sit on a grid of columns and rows that goes on for ever; only the ones

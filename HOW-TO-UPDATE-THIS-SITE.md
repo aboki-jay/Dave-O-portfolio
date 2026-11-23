@@ -99,7 +99,15 @@ How they are set up on this site:
 
 - Clarity is told not to use cookies, so there is no cookie banner. Because of that it measures each page separately and cannot follow one visitor from page to page.
 - Clarity is skipped for visitors whose browser asks not to be tracked, and it never loads on the confidential case study.
-- The preview on your own computer is not counted. Your own visits to the live site are.
+- The preview on your own computer is not counted. Your own visits to the live site are, unless you block your own address in Clarity (**Settings**, **IP blocking**).
+- Because Clarity measures each page separately, its "sessions" and "unique users" are really pages opened, "pages per session" is always 1, and nobody shows as returning.
+- Clarity is told by name when a visitor does one of the things that matter. Look for these on the Clarity dashboard under **Smart events**, or use them as a filter to watch only those visits:
+  - **Contact:** copied email, email link, LinkedIn, X, Contact button
+  - **Resume:** downloaded PDF
+  - **Case study opened from:** home page, Work page, phone menu, another case study
+  - **Case study:** read to the end
+  - **Exploration:** opened link, viewed picture
+- To see where visitors come from, add a tag to the link you share, for example `https://davidokunlola.com/?utm_source=linkedin` or `?utm_source=whatsapp`. It then shows under **Source** in Clarity.
 - To switch either tool off, ask Claude. The two IDs are in `site-source/content/site-details.json`.
 
 ## Things only you can do
