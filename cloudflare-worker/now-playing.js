@@ -59,8 +59,10 @@ async function answerFromSpotify(request, env, ctx, address, seconds, ask) {
     console.error(`${address}:`, error.message || error);
     answer = { state: "off" };
   }
-  // When something went wrong, try again soon rather than hiding that part of the page for ten minutes.
-  const response = json(answer, answer.state === "off" ? Math.min(seconds, 60) : seconds);
+  // When something went wrong (nothing came back, or a playlist was left out), try again soon rather
+  // than keeping a poor answer for ten minutes.
+  const { incomplete, ...shown } = answer;
+  const response = json(shown, answer.state === "off" || incomplete ? Math.min(seconds, 60) : seconds);
   ctx.waitUntil(shelf.put(label, response.clone()));
   return response;
 }
@@ -128,14 +130,22 @@ async function chosenPlaylists(fromSpotify) {
   // The links in playlists-to-show.js end in the playlist's code, for example .../playlist/3p0Lp423rk0yg7WVqy1DYY
   const codes = PLAYLISTS_TO_SHOW.map((link) => (String(link).match(/playlist[/:]([A-Za-z0-9]{22})/) || [])[1]).filter(Boolean);
   const wanted = "name,public,images,external_urls,items(total),tracks(total)"; // Spotify renamed "tracks" to "items" in 2026
-  const found = await Promise.all(
-    [...new Set(codes)].slice(0, MOST_PLAYLISTS).map((code) =>
-      fromSpotify(`/playlists/${code}?fields=${encodeURIComponent(wanted)}`).catch((error) => {
-        console.error("playlist skipped:", error.message || error); // one playlist failing must not empty the list
-        return null;
-      })
-    )
-  );
+  // Ask for them one at a time (gentler on Spotify than all at once), and try a second time if one fails.
+  // A playlist that still fails is left out this time, so one hiccup does not empty the whole list.
+  const readOne = async (code) => {
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        return await fromSpotify(`/playlists/${code}?fields=${encodeURIComponent(wanted)}`);
+      } catch (error) {
+        if (attempt === 2) console.error("playlist left out this time:", error.message || error);
+        else await new Promise((resume) => setTimeout(resume, 400));
+      }
+    }
+    return undefined;
+  };
+  const found = [];
+  for (const code of [...new Set(codes)].slice(0, MOST_PLAYLISTS)) found.push(await readOne(code));
+  const leftOut = found.filter((playlist) => playlist === undefined).length;
   const playlists = found
     // A playlist David has set to private stops here, even if it is on the list.
     .filter((playlist) => playlist && playlist.public !== false)
@@ -149,7 +159,7 @@ async function chosenPlaylists(fromSpotify) {
       };
     })
     .filter((playlist) => playlist.name && /^https:\/\/open\.spotify\.com\//.test(playlist.url));
-  return { state: "ok", playlists };
+  return { state: "ok", playlists, incomplete: leftOut > 0 };
 }
 
 // Spotify offers each picture in a few sizes. Take the smallest one that is at least as wide as wanted.
